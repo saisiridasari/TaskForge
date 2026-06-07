@@ -1,0 +1,122 @@
+.calendar-page { position: relative; }
+
+.calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.calendar-wrapper {
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* FullCalendar overrides */
+.fc .fc-toolbar-title {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.fc .fc-button {
+  background: var(--white) !important;
+  border: 1.5px solid var(--border) !important;
+  color: var(--text-2) !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border-radius: var(--radius) !important;
+  padding: 6px 12px !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: all 0.15s !important;
+}
+
+.fc .fc-button:hover {
+  background: var(--gray-2) !important;
+  border-color: var(--gray-3) !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+  color: white !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--text-3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 8px 4px !important;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: var(--text-2) !important;
+  padding: 6px 8px !important;
+}
+
+.fc .fc-day-today {
+  background: var(--blue-light) !important;
+}
+
+.fc .fc-daygrid-day-top { justify-content: flex-start; }
+
+.fc .fc-event {
+  border-radius: 6px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  padding: 2px 6px !important;
+  cursor: pointer !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.fc .fc-event:hover { opacity: 0.85; }
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: var(--border) !important;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  border-color: var(--border) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden !important;
+}
+
+.fc .fc-more-link {
+  font-size: 11px !important;
+  color: var(--blue) !important;
+  font-weight: 600 !important;
+}

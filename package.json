@@ -1,0 +1,15 @@
+{
+  "name": "taskflow",
+  "version": "1.0.0",
+  "description": "TaskFlow - Full Stack MERN Project Management System",
+  "scripts": {
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "cd server && npm run dev",
+    "start:server": "cd server && npm start",
+    "start:client": "cd client && npm start",
+    "setup": "cp server/.env.example server/.env && cp client/.env.example client/.env"
+  },
+  "keywords": ["mern", "project-management", "kanban", "trello"],
+  "author": "TaskFlow",
+  "license": "MIT"
+}

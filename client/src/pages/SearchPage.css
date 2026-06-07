@@ -1,0 +1,138 @@
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.search-input-large {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 13px 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s;
+}
+
+.search-input-large:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+}
+
+.search-input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--text);
+  background: transparent;
+}
+.search-input-field::placeholder { color: var(--text-4); }
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-select { width: 160px; }
+
+.results-count {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.results-section { margin-bottom: 24px; }
+
+.results-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 10px;
+}
+
+.results-list { overflow: hidden; }
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  transition: background 0.12s;
+  text-decoration: none;
+  color: inherit;
+}
+.result-row:hover { background: var(--gray-2); }
+
+.result-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.task-result-icon { background: var(--blue-light); color: #2563eb; }
+
+.result-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.result-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.result-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--text-4);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.result-date {
+  font-size: 12px;
+  color: var(--text-4);
+  font-weight: 500;
+}
+
+.search-placeholder {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--text-3);
+}
+
+.search-placeholder h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin: 16px 0 6px;
+}
+
+.search-placeholder p { font-size: 14px; }
