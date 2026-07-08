@@ -1,299 +1,143 @@
-# TaskFlow v2 — Premium MERN Project Management System
+# TaskForge
 
-A full-stack, production-ready project management platform with real-time collaboration, Kanban boards, file attachments, calendar views, automation rules, activity logs, and advanced search.
+TaskForge is a full-stack MERN project management platform built around real-time collaboration. Teams organize work on Kanban boards, attach files to tasks, track every change in an activity log, automate routine notifications, and view deadlines on a calendar — with updates syncing live across everyone viewing a project.
 
----
+## Features
 
-## ✨ Features
+- JWT authentication with bcrypt hashing and role-based access (Admin, Manager, Member)
+- Projects with color labels, deadlines, and auto-created boards
+- Drag-and-drop Kanban boards with task priorities, due dates, and assignees
+- Real-time collaboration over Socket.io: live task and board updates, comments, typing indicators, and active-user presence
+- File and avatar uploads via Cloudinary (PDF, DOCX, images, ZIP)
+- Activity log capturing every action across a project and its tasks
+- Global search across tasks, projects, users, and boards, with filters
+- Calendar view of task deadlines (FullCalendar)
+- No-code IF/THEN automation rules per project
+- Light and dark themes, toggleable from settings
+- Installable Progressive Web App with offline caching in production builds
 
-### Core (v1)
-- JWT authentication with bcrypt password hashing
-- Role-based access control (Admin / Manager / Member)
-- Project CRUD with color labels and deadlines
-- Trello-like drag-and-drop Kanban boards
-- Task management with priorities, due dates, assignees
-- Team management — invite by email
-- Notifications system
-- User profile management
+## Tech Stack
 
-### New in v2
-- **Real-Time Collaboration** — Socket.io live task sync, live comments, active user indicators
-- **File Attachments** — Upload PDF, DOCX, images, ZIP to tasks via Cloudinary
-- **Avatar Upload** — Upload profile photos via Cloudinary
-- **Activity Log / Audit Trail** — Full history of every action per project and task
-- **Advanced Search** — Global search across tasks, projects, users, boards with filters
-- **Calendar View** — Monthly/weekly/daily view of task deadlines (FullCalendar)
-- **Automation Rules** — No-code IF/THEN workflow rules per project
-- **Real-Time Comments** — Threaded comments on tasks with live sync
-- **PWA Support** — Installable on mobile & desktop, offline caching, push notification ready
+**Frontend:** React 18, React Router v6, Socket.io client, @hello-pangea/dnd, FullCalendar, Axios, lucide-react, date-fns, react-hot-toast
 
----
+**Backend:** Node.js, Express, MongoDB with Mongoose, Socket.io, JWT, bcryptjs
 
-## 🛠 Tech Stack
+**Uploads:** Multer with Cloudinary
 
-| Layer       | Technology                            |
-|-------------|---------------------------------------|
-| Frontend    | React 18, React Router v6             |
-| Real-time   | Socket.io Client                      |
-| Drag & Drop | @hello-pangea/dnd                     |
-| Calendar    | FullCalendar (React)                  |
-| HTTP        | Axios                                 |
-| Backend     | Node.js, Express.js                   |
-| Database    | MongoDB, Mongoose                     |
-| Auth        | JWT, bcryptjs                         |
-| Real-time   | Socket.io                             |
-| File Upload | Multer + Cloudinary                   |
-| Dates       | date-fns                              |
-| Toasts      | react-hot-toast                       |
-
----
-
-## 📁 Folder Structure
+## Project Structure
 
 ```
-TaskFlow/
-├── client/                         React Frontend
-│   ├── public/
-│   │   ├── index.html              PWA-enabled HTML
-│   │   ├── manifest.json           PWA manifest
-│   │   └── service-worker.js       Offline service worker
+TaskForge/
+├── client/                 React frontend
 │   └── src/
-│       ├── components/
-│       │   ├── board/              BoardModal
-│       │   ├── common/             Avatar, SearchBar
-│       │   ├── layout/             AppLayout (sidebar + topbar)
-│       │   ├── project/            ProjectModal
-│       │   ├── task/               TaskModal (tabs: details/comments/attachments/activity)
-│       │   └── team/               TeamPanel
-│       ├── context/
-│       │   ├── AuthContext.js
-│       │   ├── ProjectContext.js
-│       │   ├── NotificationContext.js
-│       │   └── SocketContext.js    NEW — real-time socket
-│       ├── pages/
-│       │   ├── LoginPage.js
-│       │   ├── RegisterPage.js
-│       │   ├── DashboardPage.js
-│       │   ├── ProjectsPage.js
-│       │   ├── ProjectBoardPage.js  Real-time Kanban
-│       │   ├── CalendarPage.js      NEW — FullCalendar
-│       │   ├── SearchPage.js        NEW — advanced search
-│       │   ├── ActivityPage.js      NEW — audit trail
-│       │   ├── AutomationPage.js    NEW — IF/THEN rules
-│       │   ├── NotificationsPage.js
-│       │   ├── TeamPage.js
-│       │   └── ProfilePage.js       Avatar upload
-│       └── services/
-│           └── api.js               All API calls
-│
-└── server/                         Node/Express Backend
-    ├── config/
-    │   ├── db.js                    MongoDB connection
-    │   ├── socket.js                NEW — Socket.io manager
-    │   ├── cloudinary.js            NEW — File upload config
-    │   └── activityHelper.js        NEW — Activity logger
-    ├── controllers/
-    │   ├── authController.js
-    │   ├── projectController.js
-    │   ├── boardController.js
-    │   ├── taskController.js        + comments, socket events
-    │   ├── notificationController.js
-    │   ├── userController.js
-    │   ├── activityController.js    NEW
-    │   ├── searchController.js      NEW
-    │   ├── rulesController.js       NEW
-    │   └── uploadController.js      NEW
-    ├── middleware/
-    │   ├── auth.js
-    │   └── errorHandler.js
-    ├── models/
-    │   ├── User.js
-    │   ├── Project.js
-    │   ├── Board.js
-    │   ├── Task.js                  + attachments, comments fields
-    │   ├── Notification.js
-    │   ├── Activity.js              NEW
-    │   └── Rule.js                  NEW
-    ├── routes/
-    │   ├── auth.js
-    │   ├── projects.js
-    │   ├── boards.js
-    │   ├── tasks.js                 + comment endpoints
-    │   ├── notifications.js
-    │   ├── users.js
-    │   ├── activity.js              NEW
-    │   ├── search.js                NEW
-    │   ├── rules.js                 NEW
-    │   └── upload.js                NEW
-    └── server.js                    Socket.io + all routes
+│       ├── components/      layout, board, task, project, team, common
+│       ├── context/         Auth, Project, Notification, Socket, Theme
+│       ├── pages/           Dashboard, Projects, Board, Calendar, Search,
+│       │                    Activity, Automation, Notifications, Team, Profile
+│       └── services/        api.js — all API calls
+└── server/                 Node/Express backend
+    ├── config/             db, socket, cloudinary, activity logger
+    ├── controllers/        auth, projects, boards, tasks, search, rules, upload, ...
+    ├── middleware/         auth, error handler
+    ├── models/             User, Project, Board, Task, Notification, Activity, Rule
+    ├── routes/             one router per resource
+    └── server.js           Express + Socket.io entry point
 ```
 
----
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
-- **Node.js** v16+
-- **MongoDB** (local or Atlas)
-- **Cloudinary account** (free) — for file/avatar uploads
 
----
+- Node.js 18 or newer
+- MongoDB (local or Atlas)
+- A Cloudinary account (free) for file and avatar uploads
 
-### Step 1 — Install
+### Install
 
 ```bash
-cd TaskFlow
-
-# Backend
+cd TaskForge
 cd server && npm install
-
-# Frontend
 cd ../client && npm install
 ```
 
----
-
-### Step 2 — Environment Variables
+### Configure
 
 ```bash
 cp server/.env.example server/.env
 cp client/.env.example client/.env
 ```
 
-**`server/.env`:**
+Set the server variables in `server/.env`:
+
 ```env
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/taskflow
-JWT_SECRET=your_super_secret_jwt_key_change_this
+MONGO_URI=mongodb://localhost:27017/taskforge
+JWT_SECRET=change_this_to_a_long_random_string
 JWT_EXPIRE=7d
 NODE_ENV=development
 CLIENT_URL=http://localhost:3000
 
-# Get free at cloudinary.com → Dashboard
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-> **Note:** App runs without Cloudinary — file/avatar uploads will return errors but all other features work.
+The app runs without Cloudinary; only file and avatar uploads will fail until those keys are set.
 
----
+### Run (development)
 
-### Step 3 — Run
+Start the backend and frontend in two terminals:
 
-**Terminal 1 — Backend:**
 ```bash
-cd server
-npm run dev
-# → http://localhost:5000
+# Terminal 1 — backend
+cd server && npm run dev      # http://localhost:5000
+
+# Terminal 2 — frontend
+cd client && npm start        # http://localhost:3000
 ```
 
-**Terminal 2 — Frontend:**
+## Deployment
+
+TaskForge deploys as a single service: in production the Express server serves the built React app, so the API and frontend share one origin. From the project root:
+
 ```bash
-cd client
-npm start
-# → http://localhost:3000
+npm run build    # installs dependencies and builds the client
+npm start        # runs the server, which serves the build
 ```
 
----
+A `render.yaml` blueprint is included for deployment on Render. Provide a hosted MongoDB connection string (for example, a MongoDB Atlas cluster), a strong `JWT_SECRET`, and your Cloudinary keys as environment variables, and set `NODE_ENV` to `production`.
 
-## 🔌 New API Endpoints (v2)
+## API Overview
 
-### Tasks — Comments
-| Method | Endpoint                          | Description        |
-|--------|-----------------------------------|--------------------|
-| POST   | /api/tasks/:id/comments           | Add comment        |
-| DELETE | /api/tasks/:id/comments/:cId      | Delete comment     |
+All endpoints are prefixed with `/api`.
 
-### Activity
-| Method | Endpoint                          | Description        |
-|--------|-----------------------------------|--------------------|
-| GET    | /api/activity/project/:projectId  | Project audit log  |
-| GET    | /api/activity/task/:taskId        | Task history       |
-| GET    | /api/activity/me                  | My recent activity |
+| Resource | Base path | Purpose |
+|---|---|---|
+| Auth | `/api/auth` | Register, log in, profile, change password |
+| Projects | `/api/projects` | Project CRUD and membership |
+| Boards | `/api/boards` | Board CRUD within a project |
+| Tasks | `/api/tasks` | Task CRUD and comments (`/:id/comments`) |
+| Activity | `/api/activity` | Project, task, and personal audit logs |
+| Search | `/api/search` | Global search with type and priority filters |
+| Rules | `/api/rules` | Automation rule CRUD per project |
+| Upload | `/api/upload` | Task attachments and profile avatars |
+| Notifications | `/api/notifications` | List and manage notifications |
 
-### Search
-| Method | Endpoint                          | Description        |
-|--------|-----------------------------------|--------------------|
-| GET    | /api/search?q=&type=&priority=    | Global search      |
+## Real-Time Sync
 
-### Automation Rules
-| Method | Endpoint                          | Description        |
-|--------|-----------------------------------|--------------------|
-| GET    | /api/rules/project/:projectId     | Get rules          |
-| POST   | /api/rules/project/:projectId     | Create rule        |
-| PUT    | /api/rules/:id                    | Update/toggle rule |
-| DELETE | /api/rules/:id                    | Delete rule        |
+Socket.io broadcasts changes to everyone viewing a project: task and board create, update, move, and delete events, new comments, typing indicators, and presence (who is currently on a board, plus a global online list). The client joins a room per project and applies updates as they arrive, so boards stay current without a refresh.
 
-### Upload
-| Method | Endpoint                                   | Description          |
-|--------|--------------------------------------------|----------------------|
-| POST   | /api/upload/task/:taskId/attachment        | Upload file to task  |
-| DELETE | /api/upload/task/:taskId/attachment/:aId   | Delete attachment    |
-| POST   | /api/upload/avatar                         | Upload profile photo |
+## First Run
 
----
+1. Register at `/register` and choose the Admin role.
+2. Create a project — four default boards are created automatically.
+3. Open the board and invite teammates from the Team panel.
+4. Drag tasks between boards; collaborators see the change instantly.
+5. Open a task to add comments or upload attachments.
+6. Check the Calendar for deadlines, and set up rules under Automation.
 
-## ⚡ Socket.io Events
+## License
 
-### Client → Server
-| Event              | Payload              | Description              |
-|--------------------|----------------------|--------------------------|
-| `project:join`     | projectId            | Join project room        |
-| `project:leave`    | projectId            | Leave project room       |
-| `task:moved`       | {taskId, boardId…}   | Broadcast drag-drop      |
-| `comment:typing`   | {taskId, isTyping}   | Typing indicator         |
+MIT
 
-### Server → Client
-| Event                  | Description                          |
-|------------------------|--------------------------------------|
-| `task:created`         | New task added to board              |
-| `task:updated`         | Task field changed                   |
-| `task:moved`           | Task dragged to new board            |
-| `task:deleted`         | Task removed                         |
-| `board:created`        | New board added                      |
-| `board:updated`        | Board renamed/recolored              |
-| `board:deleted`        | Board removed                        |
-| `comment:new`          | New comment on a task                |
-| `project:active_users` | List of users viewing the board      |
-| `project:user_joined`  | User entered the board               |
-| `project:user_left`    | User left the board                  |
-| `users:online`         | Global online user list              |
-| `notification:new`     | New notification for user            |
-
----
-
-## 📱 PWA — Install on Device
-
-1. Open `http://localhost:3000` in Chrome/Edge
-2. Click the **install icon** in the address bar (or browser menu → "Install TaskFlow")
-3. TaskFlow launches as a standalone app
-
----
-
-## 🎨 Design System
-
-| Token          | Value      | Usage                      |
-|----------------|------------|----------------------------|
-| `--blue`       | `#60a5fa`  | Primary actions, links     |
-| `--green`      | `#34d399`  | Success, completed, live   |
-| `--purple`     | `#a78bfa`  | Secondary accent           |
-| `--gray`       | `#e5e7eb`  | Borders, backgrounds       |
-| Background     | `#ffffff`  | Always pure white          |
-
----
-
-## 📝 First Run
-
-1. Register at `/register` — select **Admin** role
-2. Create a project — 4 default boards auto-created
-3. Open the board — invite teammates from the **Team** button
-4. Drag tasks between boards — collaborators see changes instantly
-5. Open any task → Attachments tab → upload files
-6. Visit **Calendar** to see all deadlines
-7. Visit **Automation** (inside a project) to set up rules
-
----
-
-## 📄 License
-MIT © TaskFlow v2
+**Live demo:** https://task-forge-dusky.vercel.app/
