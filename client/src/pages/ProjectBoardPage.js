@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useProject } from '../context/ProjectContext';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import { aiAPI } from '../services/api';
 import { format } from 'date-fns';
 import Avatar from '../components/common/Avatar';
 import TaskModal from '../components/task/TaskModal';
@@ -106,6 +107,28 @@ export default function ProjectBoardPage() {
 
   const getTasksForBoard = (boardId) =>
     tasks.filter(t => t.boardId === boardId).sort((a, b) => a.order - b.order);
+
+  // NEW — clears the AI Draft badge. Optimistic update (badge disappears
+  // immediately) with rollback if the request actually fails, so a slow
+  // network doesn't leave the UI looking unresponsive.
+  const handleMarkReviewed = async (task) => {
+    setTasks(prev => prev.map(t =>
+      t._id === task._id
+        ? { ...t, aiMetadata: { ...t.aiMetadata, reviewStatus: 'reviewed' } }
+        : t
+    ));
+    try {
+      await aiAPI.markReviewed(task._id);
+    } catch (err) {
+      // Revert on failure — badge comes back, user can try again.
+      setTasks(prev => prev.map(t =>
+        t._id === task._id
+          ? { ...t, aiMetadata: { ...t.aiMetadata, reviewStatus: 'draft' } }
+          : t
+      ));
+      toast.error('Failed to mark task as reviewed');
+    }
+  };
 
   const onDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
@@ -226,6 +249,35 @@ export default function ProjectBoardPage() {
                               onClick={() => { setEditTask(task); setShowTaskModal(true); }}>
                               <div className="task-priority-bar" style={{ background: task.priority === 'high' ? '#f87171' : task.priority === 'medium' ? '#fbbf24' : '#34d399' }} />
                               <div className="task-content">
+                                {/* NEW — AI Draft indicator. Only shows for AI-generated tasks
+                                    still in draft review status (aiMetadata.reviewStatus === 'draft').
+                                    Manually-created tasks have no aiMetadata at all, so this simply
+                                    doesn't render for them. */}
+                                {task.aiMetadata?.reviewStatus === 'draft' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleMarkReviewed(task); }}
+                                    style={{
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      gap: 4,
+                                      fontSize: 10,
+                                      fontWeight: 700,
+                                      color: '#7c3aed',
+                                      background: '#f5f3ff',
+                                      border: '1px solid #ddd6fe',
+                                      borderRadius: 20,
+                                      padding: '2px 8px',
+                                      marginBottom: 6,
+                                      cursor: 'pointer',
+                                    }}
+                                    title="Click to mark as reviewed"
+                                  >
+                                    <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                      <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    AI Draft
+                                  </button>
+                                )}
                                 {task.completed && <div className="task-completed-badge">✓ Done</div>}
                                 <div className={`task-title ${task.completed ? 'completed' : ''}`}>{task.title}</div>
                                 {task.description && <div className="task-desc">{task.description}</div>}

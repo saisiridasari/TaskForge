@@ -19,6 +19,8 @@ const { ai, DEFAULT_MODEL } = require('../config/gemini');
 const { recordAIUsage } = require('../middleware/aiRateLimit');
 const { generateValidatedProjectPlan } = require('../services/projectGenerationService');
 const { createProjectFromPlan } = require('../services/projectPlanWriter');
+const { askAboutTask } = require('../services/taskIntelligenceService');
+const { logActivity } = require('../config/activityHelper');
 
 const pingSchema = {
   type: 'object',
@@ -105,10 +107,13 @@ const generateProject = async (req, res) => {
     result.generation.project = project._id;
     await result.generation.save();
 
-    // TODO: reuse your existing logActivity helper here for an
-    // 'ai_project_generated' entry (extend the Activity model's actionType
-    // enum first) — matching how boardController/taskController already
-    // log activity after their own writes.
+    await logActivity({
+      userId: req.user._id,
+      action: `generated project "${project.title}" with AI (${boards.length} boards, ${tasks.length} tasks)`,
+      actionType: 'ai_project_generated',
+      projectId: project._id,
+      meta: { generationId: result.generation._id, boardCount: boards.length, taskCount: tasks.length },
+    });
 
     return res.status(201).json({
       ok: true,
@@ -126,4 +131,73 @@ const generateProject = async (req, res) => {
   }
 };
 
-module.exports = { pingAI, generateProject };
+module.exports = { pingAI, generateProject, askTask, markTaskReviewed };
+
+// PUT /api/ai/tasks/:id/review
+// Clears the "AI Draft" status once a human has actually looked at the task.
+// No body needed — this is a simple state transition, not an edit.
+async function markTaskReviewed(req, res) {
+  try {
+    const Task = require('../models/Task');
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    if (!task.aiMetadata) {
+      // Not an AI-generated task at all — nothing to mark reviewed.
+      return res.status(400).json({ message: 'This task has no AI metadata to review' });
+    }
+
+    task.aiMetadata.reviewStatus = 'reviewed';
+    await task.save();
+
+    return res.json({ ok: true, task });
+  } catch (err) {
+    console.error('Mark task reviewed failed:', err);
+    return res.status(500).json({
+      message: 'Failed to mark task as reviewed',
+      error: err.message,
+    });
+  }
+}
+
+// POST /api/ai/tasks/:id/ask
+// body: { "mode": "explain"|"code"|"tests"|"estimate"|"review"|"ask", "question": "..." }
+// (question required only when mode === "ask")
+async function askTask(req, res) {
+  try {
+    const { mode, question } = req.body;
+    const validModes = ['explain', 'code', 'tests', 'estimate', 'review', 'ask'];
+
+    if (!mode || !validModes.includes(mode)) {
+      return res.status(400).json({ message: `mode must be one of: ${validModes.join(', ')}` });
+    }
+
+    if (mode === 'ask' && (!question || typeof question !== 'string' || question.trim().length < 3)) {
+      return res.status(400).json({ message: 'A question is required when mode is "ask"' });
+    }
+
+    const result = await askAboutTask({
+      taskId: req.params.id,
+      userId: req.user._id,
+      mode,
+      question: question ? question.trim() : undefined,
+    });
+
+    if (!result.success) {
+      // Task not found, or the Gemini call itself failed — either way this
+      // is a clean, expected failure mode, not a crash.
+      return res.status(422).json({ message: result.error });
+    }
+
+    return res.json({ ok: true, mode, answer: result.answer });
+  } catch (err) {
+    console.error('AI task Q&A failed:', err);
+    return res.status(500).json({
+      message: 'AI task Q&A failed — check server logs',
+      error: err.message,
+    });
+  }
+}

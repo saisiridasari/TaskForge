@@ -101,4 +101,12 @@ export const uploadAPI = {
     }),
 };
 
+// NEW — Phase 1-3 AI endpoints. Same pattern as every object above.
+export const aiAPI = {
+  ping: (data) => API.post('/ai/ping', data),
+  generateProject: (data) => API.post('/ai/projects/generate', data),
+  askTask: (taskId, data) => API.post(`/ai/tasks/${taskId}/ask`, data),
+  markReviewed: (taskId) => API.put(`/ai/tasks/${taskId}/review`),
+};
+
 export default API;

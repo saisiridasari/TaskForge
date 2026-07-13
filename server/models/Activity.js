@@ -17,6 +17,7 @@ const activitySchema = new mongoose.Schema({
       'task_completed', 'deadline_changed', 'user_assigned', 'user_removed',
       'board_created', 'board_deleted', 'project_updated', 'project_created',
       'comment_added', 'attachment_added', 'attachment_deleted',
+      'ai_project_generated', // NEW — logged when AI generates a full project plan
     ],
     default: 'task_updated',
   },

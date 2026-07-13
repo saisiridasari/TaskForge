@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { format } from 'date-fns';
 import Avatar from '../components/common/Avatar';
 import ProjectModal from '../components/project/ProjectModal';
+import AIGenerateProjectModal from '../components/project/AIGenerateProjectModal';
 import toast from 'react-hot-toast';
 import './ProjectsPage.css';
 
@@ -14,6 +15,7 @@ export default function ProjectsPage() {
   const { projects, fetchProjects, loadingProjects, deleteProject } = useProject();
   const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [editProject, setEditProject] = useState(null);
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -36,10 +38,16 @@ export default function ProjectsPage() {
           <h1 className="page-title">Projects</h1>
           <p className="page-subtitle">{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
         </div>
-        <button className="btn btn-primary" onClick={() => { setEditProject(null); setShowModal(true); }}>
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" strokeLinecap="round"/></svg>
-          New Project
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button className="btn btn-secondary" onClick={() => setShowAIModal(true)}>
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Generate with AI
+          </button>
+          <button className="btn btn-primary" onClick={() => { setEditProject(null); setShowModal(true); }}>
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" strokeLinecap="round"/></svg>
+            New Project
+          </button>
+        </div>
       </div>
 
       {loadingProjects ? (
@@ -48,7 +56,7 @@ export default function ProjectsPage() {
         <div className="empty-state" style={{ marginTop: 80 }}>
           <svg width="56" height="56" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <h3>No projects yet</h3>
-          <p>Click "New Project" to create your first project</p>
+          <p>Click "New Project" to create your first project, or "Generate with AI" to describe an idea and let AI build the plan</p>
         </div>
       ) : (
         <div className="projects-grid">
@@ -114,6 +122,10 @@ export default function ProjectsPage() {
           project={editProject}
           onClose={() => { setShowModal(false); setEditProject(null); }}
         />
+      )}
+
+      {showAIModal && (
+        <AIGenerateProjectModal onClose={() => setShowAIModal(false)} />
       )}
     </div>
   );

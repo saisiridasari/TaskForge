@@ -7,7 +7,7 @@ import Avatar from '../common/Avatar';
 import toast from 'react-hot-toast';
 import './TaskModal.css';
 
-const TABS = ['details', 'comments', 'attachments', 'activity'];
+const TABS = ['details', 'comments', 'attachments', 'activity', 'ai'];
 
 export default function TaskModal({ task, boardId, projectId, members, boards, defaultDueDate, onClose }) {
   const { createTask, updateTask, deleteTask, tasks, setTasks } = useProject();
@@ -149,7 +149,7 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
           <div className="task-tabs">
             {TABS.map(tab => (
               <button key={tab} className={`task-tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'ai' ? 'AI' : tab.charAt(0).toUpperCase() + tab.slice(1)}
                 {tab === 'comments' && currentComments.length > 0 && <span className="tab-count">{currentComments.length}</span>}
                 {tab === 'attachments' && currentAttachments.length > 0 && <span className="tab-count">{currentAttachments.length}</span>}
               </button>
@@ -324,6 +324,13 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
               <TaskActivityFeed taskId={task._id} />
             </div>
           )}
+
+          {/* AI TAB */}
+          {task && activeTab === 'ai' && (
+            <div className="tab-content">
+              <TaskAIPanel taskId={task._id} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -366,5 +373,127 @@ function TaskActivityFeed({ taskId }) {
         </div>
       ))}
     </div>
+  );
+}
+
+// NEW — Phase 3 AI panel. Same co-located pattern as TaskActivityFeed above:
+// its own local state, inline require() of the API module, reuses existing
+// CSS classes (comment-bubble, comment-meta, tab-empty, spinner, etc.) so it
+// looks native rather than bolted on.
+//
+// KNOWN LIMITATION: `exchanges` is session-only — closing and reopening the
+// task modal clears what's shown here, even though the actual Q&A is still
+// saved server-side in TaskConversation (summarization/context still works
+// correctly behind the scenes). There's no GET endpoint yet to fetch past
+// conversation history for display — a clean small addition later if you
+// want the panel to remember what was asked across sessions.
+const AI_MODES = [
+  { key: 'explain', label: 'Explain' },
+  { key: 'code', label: 'Generate Code' },
+  { key: 'tests', label: 'Generate Tests' },
+  { key: 'estimate', label: 'Estimate' },
+  { key: 'review', label: 'Review' },
+];
+
+function TaskAIPanel({ taskId }) {
+  const [loading, setLoading] = useState(false);
+  const [exchanges, setExchanges] = useState([]);
+  const [question, setQuestion] = useState('');
+  const { aiAPI } = require('../../services/api');
+
+  const runMode = async (mode) => {
+    setLoading(true);
+    try {
+      const res = await aiAPI.askTask(taskId, { mode });
+      setExchanges((prev) => [...prev, { mode, question: null, answer: res.data.answer }]);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI request failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAsk = async () => {
+    if (!question.trim()) return;
+    setLoading(true);
+    try {
+      const res = await aiAPI.askTask(taskId, { mode: 'ask', question: question.trim() });
+      setExchanges((prev) => [...prev, { mode: 'ask', question: question.trim(), answer: res.data.answer }]);
+      setQuestion('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'AI request failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+        {AI_MODES.map((m) => (
+          <button
+            key={m.key}
+            className="btn btn-secondary btn-sm"
+            onClick={() => runMode(m.key)}
+            disabled={loading}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      {exchanges.length === 0 && !loading && (
+        <div className="tab-empty">
+          <svg width="32" height="32" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <p>Ask the AI something about this task, or pick an option above</p>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {exchanges.map((ex, i) => (
+          <div key={i} className="comment-bubble" style={{ borderRadius: 'var(--radius)' }}>
+            <div className="comment-meta">
+              <span className="comment-author">
+                {ex.question ? `You asked: "${ex.question}"` : AI_MODES.find((m) => m.key === ex.mode)?.label || ex.mode}
+              </span>
+            </div>
+            <p className="comment-text">{ex.answer}</p>
+          </div>
+        ))}
+      </div>
+
+      {loading && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+          <div className="spinner" />
+        </div>
+      )}
+
+      <div className="comment-input-row" style={{ marginTop: 16 }}>
+        <div className="comment-input-wrap">
+          <textarea
+            className="form-input comment-input"
+            placeholder="Ask a question about this task…"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleAsk();
+              }
+            }}
+            rows={2}
+          />
+          <button
+            className="btn btn-primary btn-sm comment-submit"
+            onClick={handleAsk}
+            disabled={loading || !question.trim()}
+          >
+            {loading ? '…' : 'Ask'}
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
