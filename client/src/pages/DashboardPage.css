@@ -224,8 +224,6 @@
   margin-top: 1px;
 }
 
-/* Legacy row styles kept in case referenced elsewhere; unused by the new
-   dashboard card grid above. */
 .projects-list { padding: 8px 0; }
 
 .project-row {

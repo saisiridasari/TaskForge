@@ -41,9 +41,6 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// NEW — root route. Logged-out visitors see the public LandingPage;
-// logged-in users are sent straight to their dashboard, same as if they'd
-// hit /login or /register while already authenticated.
 const HomeRoute = () => {
   const { user, loading } = useAuth();
   if (loading) return <FullPageSpinner />;
@@ -58,10 +55,6 @@ function AppRoutes() {
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
-      {/* Pathless layout route — children use absolute paths so no
-          existing <Link to="/dashboard">-style links anywhere in the app
-          need to change. This is what lets "/" be free for the public
-          LandingPage above instead of the app shell. */}
       <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/projects" element={<ProjectsPage />} />

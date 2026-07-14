@@ -3,9 +3,6 @@ import { useNotification } from '../context/NotificationContext';
 import { formatDistanceToNow } from 'date-fns';
 import './NotificationsPage.css';
 
-// Same inline stroke-icon pattern used across Activity/Automation pages —
-// real icons instead of emoji, and colors driven by category (theme-aware
-// via CSS classes in NotificationsPage.css) instead of hardcoded hex.
 const icons = {
   clipboard: <><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" strokeLinecap="round" /></>,
   checkCircle: <><path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" /><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round" /></>,

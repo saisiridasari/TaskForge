@@ -20,9 +20,6 @@
   transition: width 0.2s ease;
 }
 
-/* NEW — collapsed (icon-only) desktop mode. Labels are hidden via CSS
-   rather than unmounted in JSX, so the width transition feels smooth
-   instead of text abruptly popping away. */
 .sidebar.collapsed {
   width: 68px;
 }
@@ -138,10 +135,6 @@
   stroke: var(--blue-deep);
 }
 
-/* NEW — signature touch: a colored accent rail on the active nav item,
-   rather than relying on background tint alone. Restrained (one thin bar,
-   one color), matching the "spend boldness in one place" approach used
-   elsewhere in today's redesign (stat card bars, team card accents). */
 .nav-item.active::before {
   content: '';
   position: absolute;
@@ -300,8 +293,6 @@
     box-shadow: var(--shadow-lg);
   }
 
-  /* Collapse mode doesn't apply to the mobile overlay pattern — always
-     show the full sidebar when it's open on a small screen. */
   .sidebar.collapsed {
     width: 240px;
   }

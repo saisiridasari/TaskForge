@@ -1,20 +1,3 @@
-// server/services/responseValidator.js
-//
-// WHAT THIS IS FOR — the most important file in Phase 1.
-//
-// Three layers, in order, and ALL THREE run every time:
-//   1. Schema layer   -> does the shape match projectPlan.schema.js?
-//   2. Parse layer    -> Zod's .safeParse(), gives detailed error paths on failure
-//   3. Semantic layer -> schema-valid isn't the same as sane. A task can pass
-//                        the schema and still reference a dependency that
-//                        doesn't exist in the same batch, or have a hallucinated
-//                        duplicate title. This layer catches that.
-//
-// This file does NOT call Gemini. It only validates something you already
-// got back. The retry-on-failure loop lives in the controller (next file),
-// which calls this, and if it fails, re-prompts Gemini with the specific
-// error before giving up.
-
 const { projectPlanSchema } = require('./schemas/projectPlan.schema');
 
 /**
@@ -35,8 +18,6 @@ function validateProjectPlan(rawOutput) {
   const plan = parsed.data;
   const semanticErrors = [];
 
-  // Collect every localId across all boards, to check dependencies resolve
-  // within the same generated batch.
   const allLocalIds = new Set();
   const seenTitlesPerBoard = new Map(); // boardName -> Set(titles)
 

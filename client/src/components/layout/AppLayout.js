@@ -16,11 +16,6 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // NEW — collapsible desktop sidebar (icon-only mode). Persisted so the
-  // choice survives a refresh, same pattern as ThemeContext. Scoped to
-  // desktop only via CSS (see .sidebar.collapsed inside the media query
-  // in AppLayout.css) — collapsing doesn't make sense on the mobile
-  // overlay pattern, so it's disabled there regardless of this state.
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('taskflow_sidebar_collapsed') === 'true');
 
   useEffect(() => {

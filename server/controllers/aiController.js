@@ -1,20 +1,3 @@
-// server/controllers/aiController.js
-//
-// WHAT THIS IS FOR:
-// `pingAI` is a throwaway proof-of-life endpoint — NOT a real feature. Its
-// only job is to confirm, before we build anything real: (1) the Gemini
-// client connects, (2) responseSchema-constrained structured output actually
-// comes back as valid JSON, (3) your API key/model access works.
-//
-// Note the schema here is a tiny hand-written one, deliberately NOT the real
-// projectPlan schema — if something breaks, you want to know whether it's
-// "Gemini/SDK connectivity" or "our complex schema," not both at once.
-//
-// Once this is confirmed working, `generateProject` gets added to this same
-// file as the real Phase 2 feature (next session) — it reuses this same
-// `ai`/`DEFAULT_MODEL` import, just with the real schema + the validator +
-// a retry loop instead of this inline one-shot call.
-
 const { ai, DEFAULT_MODEL } = require('../config/gemini');
 const { recordAIUsage } = require('../middleware/aiRateLimit');
 const { generateValidatedProjectPlan } = require('../services/projectGenerationService');
@@ -69,13 +52,9 @@ const pingAI = async (req, res) => {
   }
 };
 
-// POST /api/ai/projects/generate   body: { "idea": "...", "techStack": ["React", "Express"] }
-//
-// Synchronous for now (see Phase 2 notes — async/queued generation is a
-// later upgrade once you know generation is slow enough to need it).
 const generateProject = async (req, res) => {
   try {
-    const { idea, techStack } = req.body;
+    const { idea, techStack, deadline } = req.body;
 
     if (!idea || typeof idea !== 'string' || idea.trim().length < 5) {
       return res.status(400).json({ message: 'Please provide a project idea (at least a few words).' });
@@ -88,9 +67,7 @@ const generateProject = async (req, res) => {
     });
 
     if (!result.success) {
-      // Valid, handled failure — Gemini/validation couldn't produce usable
-      // output after retries. Not a 500: this is an expected failure mode,
-      // not a bug, so respond with something the frontend can show the user.
+    
       return res.status(422).json({
         message: 'AI could not generate a valid project plan. Try rephrasing your idea.',
         errors: result.errors,
@@ -102,6 +79,7 @@ const generateProject = async (req, res) => {
       plan: result.plan,
       userId: req.user._id,
       generationId: result.generation._id,
+      deadline: deadline || undefined, // NEW — optional, from the "Generate with AI" form
     });
 
     result.generation.project = project._id;

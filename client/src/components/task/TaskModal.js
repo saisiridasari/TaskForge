@@ -9,8 +9,6 @@ import './TaskModal.css';
 
 const TABS = ['details', 'comments', 'attachments', 'activity', 'ai'];
 
-// Real stroke icons replacing the old emoji file-type indicators
-// (🖼️📄📦📝📎), matching the icon language used across the rest of the app.
 const FILE_ICONS = {
   image: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></>,
   pdf: <><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6" /></>,

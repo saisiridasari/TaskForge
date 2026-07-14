@@ -6,7 +6,6 @@ import { format, formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 import './ProfilePage.css';
 
-/* ─── SVG Icon primitives ─────────────────────────────────────────── */
 const Icon = ({ d, size = 16, stroke = 'currentColor' }) => (
   <svg width={size} height={size} fill="none" stroke={stroke} strokeWidth="2"
     strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -39,7 +38,6 @@ const ICONS = {
   chevronRight: 'M9 18l6-6-6-6',
 };
 
-/* ─── Tab definitions per role ──────────────────────────────────────── */
 const ALL_TABS = [
   { id: 'overview',      label: 'Overview',       icon: 'grid',     roles: ['admin','manager','member'] },
   { id: 'personal',      label: 'Personal Info',  icon: 'user',     roles: ['admin','manager','member'] },
@@ -51,7 +49,6 @@ const ALL_TABS = [
   { id: 'workspace',     label: 'Workspace',      icon: 'briefcase',roles: ['admin','manager'] },
 ];
 
-/* ─── Stat card ─────────────────────────────────────────────────────── */
 function StatCard({ label, value, iconKey, accentBg, accentColor }) {
   return (
     <div className="pf-stat-card">
@@ -66,7 +63,6 @@ function StatCard({ label, value, iconKey, accentBg, accentColor }) {
   );
 }
 
-/* ─── Section header ────────────────────────────────────────────────── */
 function SectionHeader({ title, subtitle }) {
   return (
     <div className="pf-section-header">
@@ -76,7 +72,6 @@ function SectionHeader({ title, subtitle }) {
   );
 }
 
-/* ─── Toggle row ────────────────────────────────────────────────────── */
 function ToggleRow({ label, sub, checked, onChange }) {
   return (
     <div className="pf-toggle-row">
@@ -92,7 +87,6 @@ function ToggleRow({ label, sub, checked, onChange }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════ */
 export default function ProfilePage() {
   const { user, updateUser, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
@@ -136,7 +130,6 @@ export default function ProfilePage() {
     }
   }, [activeTab]);
 
-  /* ── Handlers ─────────────────────────────────────────────────── */
   const handleProfileSave = async (e) => {
     e.preventDefault();
     if (!profileForm.name.trim()) { toast.error('Name is required'); return; }
@@ -178,19 +171,15 @@ export default function ProfilePage() {
     finally { setAvatarLoading(false); e.target.value = ''; }
   };
 
-  // FIXED: all hardcoded hex -> theme variables, so role badges re-theme
-  // correctly in dark mode instead of staying stuck in light-mode colors.
   const getRoleBadgeStyle = (role) => {
     if (role === 'admin')   return { background: 'var(--purple-light)', color: 'var(--purple)' };
     if (role === 'manager') return { background: 'color-mix(in srgb, var(--accent-gold) 22%, var(--white))', color: '#8a6d2f' };
     return { background: 'var(--green-light)', color: 'var(--green)' };
   };
 
-  /* ── Tab panels ───────────────────────────────────────────────── */
   const renderTab = () => {
     switch (activeTab) {
 
-      /* ── OVERVIEW ─────────────────────────────────────────────── */
       case 'overview': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Overview" subtitle="Your workspace summary and recent activity" />
@@ -270,7 +259,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── PERSONAL INFO ────────────────────────────────────────── */
       case 'personal': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Personal Information" subtitle="Update your public profile and contact details" />
@@ -349,7 +337,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── PASSWORD ─────────────────────────────────────────────── */
       case 'password': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Change Password" subtitle="Use a strong password with at least 6 characters" />
@@ -395,7 +382,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── NOTIFICATIONS ────────────────────────────────────────── */
       case 'notifications': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Notification Preferences" subtitle="Choose what you want to be notified about" />
@@ -422,7 +408,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── ACTIVITY ─────────────────────────────────────────────── */
       case 'activity': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="My Activity" subtitle="Everything you have done across all projects" />
@@ -459,7 +444,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── SECURITY ─────────────────────────────────────────────── */
       case 'security': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Security" subtitle="Manage your sessions and account security" />
@@ -525,7 +509,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── PREFERENCES ──────────────────────────────────────────── */
       case 'preferences': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Preferences" subtitle="Customize how TaskFlow looks and behaves for you" />
@@ -569,7 +552,6 @@ export default function ProfilePage() {
         </div>
       );
 
-      /* ── WORKSPACE (admin + manager only) ─────────────────────── */
       case 'workspace': return (
         <div className="pf-panel fade-in">
           <SectionHeader title="Workspace" subtitle="Overview of your team and project workspace" />
@@ -635,7 +617,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="profile-layout">
-        {/* ── Sidebar ───────────────────────────────────── */}
+
         <aside className="profile-sidebar card">
           {/* Avatar */}
           <div className="profile-avatar-section">

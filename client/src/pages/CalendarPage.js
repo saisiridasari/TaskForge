@@ -10,9 +10,6 @@ import TaskModal from '../components/task/TaskModal';
 import toast from 'react-hot-toast';
 import './CalendarPage.css';
 
-// FullCalendar takes literal color strings, not CSS variables — so event
-// colors need to be theme-aware here in JS, matching the same palette
-// values defined in index.css for each mode.
 const EVENT_STYLES = {
   light: {
     completed: { bg: '#e0e9d6', border: '#7a8c5e', text: '#2c2416' },

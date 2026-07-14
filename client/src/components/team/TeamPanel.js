@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import { useAuth } from '../../context/AuthContext';
+import { userAPI } from '../../services/api';
 import Avatar from '../common/Avatar';
 import toast from 'react-hot-toast';
 import './TeamPanel.css';
@@ -12,6 +13,36 @@ export default function TeamPanel({ project, onClose }) {
   const [role, setRole] = useState('member');
   const [loading, setLoading] = useState(false);
 
+  // NEW — autocomplete instead of free-text: fetch workspace users once,
+  // filter out anyone already a project member, and let the user pick
+  // instead of typing a full email (and risking a typo).
+  const [allUsers, setAllUsers] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef();
+
+  useEffect(() => {
+    userAPI.getAll().then((res) => setAllUsers(res.data.users)).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const existingMemberEmails = new Set((project.members || []).map((m) => m.user?.email).filter(Boolean));
+
+  const suggestions = email.trim()
+    ? allUsers.filter((u) =>
+        !existingMemberEmails.has(u.email) &&
+        (u.name.toLowerCase().includes(email.toLowerCase()) || u.email.toLowerCase().includes(email.toLowerCase()))
+      ).slice(0, 6)
+    : [];
+
   const canManage = project.owner?._id === user?._id || user?.role === 'admin';
 
   const handleAdd = async (e) => {
@@ -22,6 +53,7 @@ export default function TeamPanel({ project, onClose }) {
       await addMember(project._id, email, role);
       toast.success('Member added');
       setEmail('');
+      setShowSuggestions(false);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add member');
     } finally {
@@ -54,14 +86,34 @@ export default function TeamPanel({ project, onClose }) {
             <div className="team-add-section">
               <h4 className="team-section-title">Invite by Email</h4>
               <form onSubmit={handleAdd} style={{ display: 'flex', gap: 8 }}>
-                <input
-                  className="form-input"
-                  type="email"
-                  placeholder="colleague@company.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  style={{ flex: 1 }}
-                />
+                <div className="team-invite-autocomplete" ref={suggestionsRef}>
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="Search by name or email…"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setShowSuggestions(true); }}
+                    onFocus={() => setShowSuggestions(true)}
+                  />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="team-invite-suggestions">
+                      {suggestions.map((u) => (
+                        <button
+                          key={u._id}
+                          type="button"
+                          className="team-invite-suggestion-item"
+                          onClick={() => { setEmail(u.email); setShowSuggestions(false); }}
+                        >
+                          <Avatar name={u.name} src={u.avatar} size="sm" />
+                          <div className="team-invite-suggestion-body">
+                            <span className="team-invite-suggestion-name">{u.name}</span>
+                            <span className="team-invite-suggestion-email">{u.email}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <select className="form-input" value={role} onChange={e => setRole(e.target.value)} style={{ width: 120 }}>
                   <option value="member">Member</option>
                   <option value="manager">Manager</option>

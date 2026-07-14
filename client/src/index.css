@@ -6,64 +6,43 @@
   padding: 0;
 }
 
-/*
-  THEME SYSTEM
-  ------------
-  Same variable NAMES your components already use (--blue, --text, --border,
-  etc.) — only the VALUES changed. This means every existing CSS file that
-  references var(--x) re-themes automatically, with zero edits needed to
-  those files.
-
-  Palette sources:
-  - Blue scale: your alice-blue -> cobalt-blue ramp (given)
-  - Warm/botanical: your parchment/ink/stem/petal/accent set (given)
-  - Cool lavender/periwinkle: given, used mainly for dark-mode text tones
-
-  Dark mode values marked "DERIVED" below did not come from your three
-  palettes (all three were light-oriented) — I built them from your
-  cobalt-blue/ocean-deep as a consistent seed so light/dark feel like one
-  product, not two unrelated themes.
-*/
 
 :root {
-  /* Core blue scale (yours) */
-  --blue: #1e88e5;         /* brilliant-azure — primary interactive color */
-  --blue-light: #e3f2fd;   /* alice-blue — light tinted backgrounds */
-  --blue-mid: #bbdefb;     /* icy-blue — mid tint, badges */
-  --blue-deep: #0d47a1;    /* cobalt-blue — hover/emphasis states */
+ 
+  --blue: #1e88e5;         
+  --blue-light: #e3f2fd;  
+  --blue-mid: #bbdefb;     
+  --blue-deep: #0d47a1;    
 
-  /* Warm/botanical accents (yours) — used for success/low-priority + tags */
-  --green: #7a8c5e;        /* stem */
-  --green-light: #eef2e8;  /* derived light tint of stem, for badge backgrounds */
-  --green-mid: #b8c9a8;    /* petal4 */
+ 
+  --green: #7a8c5e;      
+  --green-light: #eef2e8;  
+  --green-mid: #b8c9a8; 
 
-  /* Repurposed "purple" slot -> cool periwinkle (closest cool accent you have;
-     true purple wasn't in any of your three palettes) */
-  --purple: #7f9ee0;       /* derived from periwinkle-3 / baby-blue-ice, deepened for contrast */
-  --purple-light: #e2eafc; /* lavender */
-  --purple-mid: #ccdbfd;   /* periwinkle */
+  
+  --purple: #7f9ee0;       
+  --purple-light: #e2eafc;
+  --purple-mid: #ccdbfd;   
 
-  /* Warm neutrals for surfaces (yours) */
-  --gray: #e8e2d6;         /* derived warm gray between tag-bg and border */
-  --gray-2: #ede9e0;       /* tag-bg */
-  --gray-3: #d8cfc0;       /* derived, deeper warm gray for stronger borders */
+ 
+  --gray: #e8e2d6;         
+  --gray-2: #ede9e0;       
+  --gray-3: #d8cfc0;      
 
-  /* Text (yours — ink/muted) */
-  --text: #2c2416;         /* ink */
-  --text-2: #4a3f30;       /* derived, one step lighter than ink */
-  --text-3: #7a6f60;       /* muted */
-  --text-4: #a89e8f;       /* derived, lighter muted for placeholders/hints */
 
-  /* Surfaces (yours — parchment/paper/card-bg) */
-  --white: #fffdf9;        /* card-bg — used for cards, modals, inputs */
-  --bg-page: #faf8f4;      /* parchment — the actual page background, one
-                               step deeper than card surfaces for subtle depth */
-  --border: #e0d8cc;       /* yours */
+  --text: #2c2416;        
+  --text-2: #4a3f30;       
+  --text-3: #7a6f60;      
+  --text-4: #a89e8f;      
 
-  /* Semantic accent (yours — rust/gold, used for priority + status) */
-  --accent-warm: #b8604a;   /* rust — high priority, danger-adjacent */
-  --accent-gold: #c9a96e;   /* warm-gold — medium priority */
+  
+  --white: #fffdf9;        
+  --bg-page: #faf8f4;     
+  --border: #e0d8cc;      
 
+  
+  --accent-warm: #b8604a;  
+  --accent-gold: #c9a96e;   
   --shadow-sm: 0 1px 3px rgba(44,36,22,0.07), 0 1px 2px rgba(44,36,22,0.05);
   --shadow: 0 4px 12px rgba(44,36,22,0.07), 0 2px 6px rgba(44,36,22,0.05);
   --shadow-md: 0 8px 24px rgba(44,36,22,0.09), 0 4px 12px rgba(44,36,22,0.05);
@@ -75,14 +54,9 @@
   --radius-xl: 24px;
 }
 
-/* DARK MODE — toggled via [data-theme="dark"] on <html>, set by ThemeContext */
+
 [data-theme="dark"] {
-  /* FIXED: cool-sky (#64b5f6) was too light for white button text to read
-     against clearly (a real WCAG contrast failure I caught while working
-     on the calendar page). dodger-blue is still bright enough to pop
-     against navy, but dark enough that white text on solid --blue buttons
-     stays legible. --blue-deep now correctly reads as "darker/stronger"
-     again, matching how it behaves in light mode. */
+ 
   --blue: #2196f3;          /* dodger-blue */
   --blue-light: #16294a;    /* DERIVED — subtle blue-tinted panel bg */
   --blue-mid: #6b8cc9;      /* DERIVED, between periwinkle and cobalt for dark-mode mid accents */
@@ -321,10 +295,13 @@ select.form-input {
   background: rgba(44,36,22,0.35);
   backdrop-filter: blur(4px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  
+  padding-top: 6vh;
+  overflow-y: auto;
   animation: fadeIn 0.15s ease;
 }
 
@@ -345,6 +322,12 @@ select.form-input {
   justify-content: space-between;
   padding: 24px 28px 20px;
   border-bottom: 1px solid var(--border);
+  
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
 .modal-title {
@@ -360,9 +343,13 @@ select.form-input {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
+ 
+  position: sticky;
+  bottom: 0;
+  background: var(--white);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
-/* Badge — priority/status colors now mapped to the warm accent set */
 .badge {
   display: inline-flex;
   align-items: center;

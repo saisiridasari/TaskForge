@@ -9,6 +9,7 @@ export default function AIGenerateProjectModal({ onClose }) {
   const { fetchProjects } = useProject();
   const [idea, setIdea] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
+  const [deadline, setDeadline] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState(null);
 
@@ -27,7 +28,11 @@ export default function AIGenerateProjectModal({ onClose }) {
         .map((s) => s.trim())
         .filter(Boolean);
 
-      const res = await aiAPI.generateProject({ idea: idea.trim(), techStack });
+      const res = await aiAPI.generateProject({
+        idea: idea.trim(),
+        techStack,
+        deadline: deadline || undefined, 
+      });
 
       toast.success(`Project generated: ${res.data.project.title} (${res.data.taskCount} tasks)`);
       await fetchProjects();
@@ -82,9 +87,17 @@ export default function AIGenerateProjectModal({ onClose }) {
               </p>
             </div>
 
-            {/* FIXED: error box colors were hardcoded #fef2f2/#fecaca/#b91c1c —
-                now built from var(--accent-warm), same pattern used for
-                every other "danger/error" surface fixed today. */}
+            <div className="form-group">
+              <label className="form-label">Deadline (optional)</label>
+              <input
+                type="date"
+                className="form-input"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+
             {errors && (
               <div style={{
                 background: 'color-mix(in srgb, var(--accent-warm) 8%, var(--white))',

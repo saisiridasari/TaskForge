@@ -20,8 +20,6 @@ function StatCard({ label, value, color, icon, bg }) {
   );
 }
 
-// NEW — recent projects now render as compact cards (same visual language
-// as ProjectsPage's full cards, just denser) instead of a plain row list.
 function RecentProjectCard({ project }) {
   return (
     <Link to={`/projects/${project._id}`} className="rp-card">
@@ -103,9 +101,6 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* NEW — two-column layout: recent projects (cards) on the left,
-          a quick-actions panel on the right. Stacks vertically on
-          narrower screens (see media query in DashboardPage.css). */}
       <div className="dashboard-main">
         <div className="dashboard-section">
           <div className="section-header">

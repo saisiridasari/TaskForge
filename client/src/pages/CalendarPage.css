@@ -32,10 +32,7 @@
 .calendar-loading {
   position: absolute;
   inset: 0;
-  /* FIXED: was a hardcoded rgba(255,255,255,0.7) — stayed white even in
-     dark mode, meaning the loading overlay didn't match the page around
-     it. color-mix uses the page's own current background at 70% opacity,
-     so it blends correctly in both themes. */
+ 
   background: color-mix(in srgb, var(--bg-page) 75%, transparent);
   display: flex;
   align-items: center;
@@ -43,7 +40,6 @@
   z-index: 10;
 }
 
-/* FullCalendar overrides */
 .fc .fc-toolbar-title {
   font-size: 16px !important;
   font-weight: 700 !important;

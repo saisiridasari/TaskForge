@@ -44,8 +44,7 @@
   font-weight: 800;
   letter-spacing: 0.06em;
 }
-/* Theme-aware now — previously hardcoded #1d4ed8 / #065f46, which
-   wouldn't have adapted correctly in dark mode. */
+
 .rule-badge.if { background: var(--blue-mid); color: var(--blue-deep); }
 .rule-badge.then { background: var(--green-mid); color: var(--green); }
 
@@ -55,7 +54,6 @@
   justify-content: flex-end;
 }
 
-/* Rules list */
 .rules-list {
   display: flex;
   flex-direction: column;
@@ -149,10 +147,7 @@
   width: 14px;
   left: 3px;
   bottom: 3px;
-  /* Intentionally a fixed light color, not a theme variable — a toggle
-     thumb needs to read clearly against both the gray (off) and blue (on)
-     track in both light and dark mode, the same way iOS/Android switches
-     keep a constant white thumb regardless of system theme. */
+  
   background: #fefefe;
   border-radius: 50%;
   transition: 0.2s;

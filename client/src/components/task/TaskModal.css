@@ -180,9 +180,6 @@
 }
 .attachment-item:hover { background: var(--white); }
 
-/* FIXED: was a bare emoji with just font-size — now a proper icon chip,
-   matching the icon-box treatment used elsewhere (search results,
-   notifications, etc.) instead of a floating unstyled glyph. */
 .attachment-icon {
   width: 32px;
   height: 32px;

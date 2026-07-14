@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import toast from 'react-hot-toast';
 
-// Stored as literal hex in the database (project.color), rendered
-// elsewhere (banners, dots) — so these stay actual hex, drawn from the
-// new palette instead of the old default Tailwind pastels.
 const COLORS = ['#1e88e5', '#0d47a1', '#7a8c5e', '#6b7f52', '#b8604a', '#c9a96e', '#7f9ee0', '#d4a89a'];
 
 export default function ProjectModal({ project, onClose }) {

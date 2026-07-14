@@ -1,15 +1,8 @@
-/*
-  Simplified after adding a dedicated LandingPage — the feature showcase
-  now lives there instead of being duplicated on both Login and Register.
-  These pages keep a light branding panel only.
-*/
-
 .auth-page {
   display: flex;
   min-height: 100vh;
 }
 
-/* ── Left branding panel ─────────────────────────────────────────── */
 .auth-left {
   flex: 1;
   max-width: 480px;
@@ -84,7 +77,6 @@
   color: white;
 }
 
-/* ── Right form panel ────────────────────────────────────────────── */
 .auth-right {
   flex: 1;
   display: flex;
@@ -141,7 +133,6 @@
   text-decoration: underline;
 }
 
-/* ── Responsive ──────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .auth-left {
     display: none;

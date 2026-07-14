@@ -1,16 +1,3 @@
-// server/services/projectGenerationService.js
-//
-// WHAT THIS IS FOR:
-// The actual orchestration logic for Phase 2: call Gemini with the versioned
-// prompt + schema, validate the response, retry with specific error feedback
-// if invalid, and record the result (success or failure) as a
-// ProjectGeneration document either way.
-//
-// This does NOT create Board/Task documents — that's a separate concern
-// (next file), kept separate so this service only has one job: "get a
-// validated plan, or a clear failure reason." Turning a validated plan into
-// real database documents is a different responsibility.
-
 const { ai, DEFAULT_MODEL } = require('../config/gemini');
 const { buildProjectGeneratorPrompt, PROMPT_VERSION } = require('./prompts/projectGenerator.v1');
 const { projectPlanGeminiSchema } = require('./schemas/projectPlan.geminiSchema');

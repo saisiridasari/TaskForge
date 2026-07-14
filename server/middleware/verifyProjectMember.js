@@ -1,18 +1,3 @@
-// server/middleware/verifyProjectMember.js
-//
-// WHY THIS FILE EXISTS:
-// Per the handbook (§17.2), board/task/upload routes currently check
-// authentication (`protect`) but NOT project membership — any logged-in
-// user who knows an id can read/modify another project's data (IDOR).
-// This gets fixed here once, and every AI route (and ideally the existing
-// routes too, over time) mounts one of these three middlewares after `protect`.
-//
-// Three variants because routes carry the project reference differently:
-//   - verifyProjectMember        -> route already has projectId (params/body/query)
-//   - verifyBoardProjectMember   -> route only has a board id (e.g. PUT /boards/:id)
-//   - verifyTaskProjectMember    -> route only has a task id (e.g. PUT /tasks/:id,
-//                                    upload routes keyed by :taskId)
-
 const mongoose = require('mongoose');
 const Project = require('../models/Project');
 const Board = require('../models/Board');

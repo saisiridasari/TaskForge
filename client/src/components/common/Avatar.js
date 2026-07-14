@@ -1,11 +1,6 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 
-// Deterministic hash-based color per person, now drawn from the new
-// palette instead of generic Tailwind pastels — and, since avatars appear
-// everywhere, given a real dark-mode counterpart rather than staying
-// fixed-light regardless of theme (light pastel-bg + dark text doesn't
-// read as clearly once the card around it goes dark navy).
 const LIGHT_COLORS = [
   { bg: '#e3f2fd', text: '#0d47a1' }, // blue
   { bg: '#eef2e8', text: '#4a5738' }, // sage/green

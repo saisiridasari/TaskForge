@@ -6,6 +6,65 @@
   border: 1px solid var(--border);
 }
 
+.team-invite-autocomplete {
+  position: relative;
+  flex: 1;
+}
+
+.team-invite-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  z-index: 300;
+  overflow: hidden;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.team-invite-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+.team-invite-suggestion-item:hover {
+  background: var(--gray-2);
+}
+
+.team-invite-suggestion-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.team-invite-suggestion-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-invite-suggestion-email {
+  font-size: 11.5px;
+  color: var(--text-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .team-section-title {
   font-size: 12px;
   font-weight: 600;
@@ -48,7 +107,6 @@
   color: var(--text);
 }
 
-/* FIXED: was hardcoded #2563eb */
 .owner-tag {
   background: var(--blue-light);
   color: var(--blue-deep);

@@ -5,8 +5,6 @@ import Avatar from '../components/common/Avatar';
 import { formatDistanceToNow } from 'date-fns';
 import './ActivityPage.css';
 
-// Small inline icon set, matching the same stroke-icon language used
-// elsewhere in the app (nav items, task cards) rather than emoji.
 const icons = {
   check: <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />,
   edit: <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />,
@@ -24,9 +22,6 @@ const icons = {
   bell: <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />,
 };
 
-// Category drives color (theme-aware, via CSS classes in ActivityPage.css)
-// — not per-action hex values, so this stays correct across light/dark mode
-// without any changes here if the theme changes later.
 const ACTION_META = {
   task_created: { icon: icons.check, category: 'success' },
   task_updated: { icon: icons.edit, category: 'info' },

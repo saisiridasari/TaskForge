@@ -25,7 +25,7 @@ const ruleSchema = new mongoose.Schema({
     ],
   },
   triggerValue: {
-    // e.g. boardName for task_moved_to_board, days for task_due_soon
+    
     type: String,
     default: '',
   },

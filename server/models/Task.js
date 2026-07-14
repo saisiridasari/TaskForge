@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-// NEW — the AI metadata subdocument. `_id: false` because this data has no
-// identity of its own outside its parent task (same reasoning as your
-// existing `attachments`/`comments` arrays, just a single object instead of
-// an array since a task only has one aiMetadata, not many).
 const aiMetadataSchema = new mongoose.Schema(
   {
     generationId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProjectGeneration' },
@@ -26,8 +22,7 @@ const aiMetadataSchema = new mongoose.Schema(
     risks: [{ type: String }],
     futureImprovements: [{ type: String }],
     acceptanceCriteria: [{ type: String }],
-    // References to other Tasks in the same project — resolved from the
-    // AI's localId scheme to real _ids by projectPlanWriter.js's pass 2.
+    
     dependencies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
     isAiGenerated: { type: Boolean, default: false },
     reviewStatus: {
@@ -88,9 +83,7 @@ const taskSchema = new mongoose.Schema({
       createdAt: { type: Date, default: Date.now },
     },
   ],
-  // NEW — only present on AI-generated tasks. Manually-created tasks simply
-  // won't have this field set, keeping those documents exactly as lean as
-  // they are today.
+ 
   aiMetadata: { type: aiMetadataSchema, default: undefined },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },

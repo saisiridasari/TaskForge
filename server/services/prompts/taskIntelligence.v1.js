@@ -1,24 +1,3 @@
-// server/services/prompts/taskIntelligence.v1.js
-//
-// WHAT THIS IS FOR:
-// One prompt builder covering every Phase 3 "AI panel" question, rather
-// than a separate prompt file per question. Consolidated into a handful of
-// MODES that cover the original feature list:
-//   - 'explain'   -> "explain this task" / "why is this needed"
-//   - 'code'      -> "generate starter code" / "generate API endpoints"
-//   - 'tests'     -> "generate test cases"
-//   - 'estimate'  -> "estimate implementation time"
-//   - 'review'    -> "identify bugs" / "suggest edge cases" / "suggest
-//                     security improvements" / "suggest performance
-//                     optimizations" — bundled together since they're all
-//                     the same underlying ask: critique this task's likely
-//                     implementation for risk.
-//   - 'ask'       -> free-form user question, for anything not covered above
-//
-// All modes share the same context block (built from taskContextAssembler.js)
-// so the "what does Gemini know about this task" logic lives in exactly
-// one place, not five.
-
 const PROMPT_VERSION = 'task-intelligence.v1';
 
 const MODE_INSTRUCTIONS = {

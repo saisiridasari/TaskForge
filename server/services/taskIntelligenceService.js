@@ -1,17 +1,3 @@
-// server/services/taskIntelligenceService.js
-//
-// WHAT THIS IS FOR:
-// The orchestration for Phase 3: build context, build the prompt, call
-// Gemini (plain text this time — no schema validation needed, since these
-// are explanations/code/prose, not structured data to write back to Mongo),
-// and persist the exchange to TaskConversation so follow-up questions have
-// history to draw on.
-//
-// NOTE ON OUTPUT: unlike Phase 2, there's no responseSchema/validator here.
-// Explanations, generated code, and reviews are free-form text — validating
-// "is this good code" the way we validate "is this a well-formed task list"
-// isn't the same kind of problem, so it's out of scope for this file.
-
 const { ai, DEFAULT_MODEL } = require('../config/gemini');
 const { buildTaskContext } = require('./taskContextAssembler');
 const { buildTaskIntelligencePrompt } = require('./prompts/taskIntelligence.v1');
@@ -45,10 +31,6 @@ async function askAboutTask({ taskId, userId, mode, question }) {
     question,
   });
 
-  // Fold in prior conversation, if any, so follow-up questions have memory.
-  // Kept simple: a short recap block ahead of the current turn's prompt,
-  // rather than a full multi-turn chat session — sufficient for a task-
-  // scoped Q&A panel where history rarely runs deep.
   let conversationPrefix = '';
   if (conversation.summarizedContext) {
     conversationPrefix += `Earlier conversation summary: ${conversation.summarizedContext}\n\n`;
@@ -93,9 +75,6 @@ async function askAboutTask({ taskId, userId, mode, question }) {
   return { success: true, answer };
 }
 
-// If history is getting long, compress the oldest messages into a rolling
-// summary and trim the raw list — keeps prompt size bounded as a task
-// accumulates a longer Q&A history over time (see Phase 3 cost notes).
 async function maybeSummarize(conversation) {
   if (conversation.messages.length <= MAX_RAW_MESSAGES) return;
 
@@ -117,8 +96,7 @@ async function maybeSummarize(conversation) {
       : summaryResponse.text;
     conversation.messages = toKeep;
   } catch (err) {
-    // Summarization failing shouldn't break the actual Q&A response —
-    // just skip trimming this time and try again once history grows more.
+  
     console.error('Conversation summarization failed:', err.message);
   }
 }

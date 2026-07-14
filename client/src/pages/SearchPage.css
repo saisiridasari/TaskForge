@@ -19,8 +19,7 @@
 
 .search-input-large:focus-within {
   border-color: var(--blue);
-  /* FIXED: was rgba(96,165,250,...) matching the old blue — updated to
-     match the current --blue value */
+
   box-shadow: 0 0 0 3px rgba(30,136,229,0.14);
 }
 

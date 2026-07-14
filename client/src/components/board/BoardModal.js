@@ -2,10 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import toast from 'react-hot-toast';
 
-// Stored as literal hex in the database (board.color), rendered elsewhere
-// (e.g. the column dot on ProjectBoardPage) — so these stay actual hex
-// values, not CSS variables, but now drawn from the new palette instead of
-// the old default blue/green/purple pastels.
 const BOARD_COLORS = [
   { label: 'Gray', value: '#e0d8cc' },
   { label: 'Blue', value: '#bbdefb' },

@@ -1,21 +1,3 @@
-// server/services/prompts/projectGenerator.v1.js
-//
-// WHAT THIS IS FOR:
-// The actual instructions sent to Gemini for Phase 2. Split into two parts:
-//   - SYSTEM_INSTRUCTION: stable rules that don't change per-request (Gemini
-//     can cache this internally across calls, and it's what you'd edit to
-//     tune output quality).
-//   - userPrompt: the per-request part (the user's idea + tech stack).
-//
-// VERSIONING: this file is "v1" on purpose. When you want to tune the
-// prompt later, create projectGenerator.v2.js rather than editing this one
-// in place — so old ProjectGeneration records still show which exact
-// prompt version produced them (see promptVersion field in that model).
-//
-// Also handles the RETRY case: if responseValidator.js rejects Gemini's
-// first attempt, the controller calls this again with `previousErrors`,
-// which appends a correction block telling Gemini exactly what was wrong.
-
 const PROMPT_VERSION = 'project-generator.v1';
 
 const SYSTEM_INSTRUCTION = `You are a senior software project planner. Given a short description of a software project, generate a complete, realistic project plan broken into boards and tasks.
