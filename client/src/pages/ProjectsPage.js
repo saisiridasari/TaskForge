@@ -9,8 +9,6 @@ import AIGenerateProjectModal from '../components/project/AIGenerateProjectModal
 import toast from 'react-hot-toast';
 import './ProjectsPage.css';
 
-const PROJECT_COLORS = ['#60a5fa', '#34d399', '#a78bfa', '#f472b6', '#fb923c', '#facc15'];
-
 export default function ProjectsPage() {
   const { projects, fetchProjects, loadingProjects, deleteProject } = useProject();
   const { user } = useAuth();
@@ -54,7 +52,7 @@ export default function ProjectsPage() {
         <div style={{ display: 'flex', justifyContent: 'center', padding: 60 }}><div className="spinner" style={{ width: 32, height: 32 }} /></div>
       ) : projects.length === 0 ? (
         <div className="empty-state" style={{ marginTop: 80 }}>
-          <svg width="56" height="56" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg width="56" height="56" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <h3>No projects yet</h3>
           <p>Click "New Project" to create your first project, or "Generate with AI" to describe an idea and let AI build the plan</p>
         </div>
@@ -62,7 +60,7 @@ export default function ProjectsPage() {
         <div className="projects-grid">
           {projects.map((project) => (
             <div key={project._id} className="project-card">
-              <div className="project-card-top" style={{ background: project.color || '#60a5fa' }}>
+              <div className="project-card-top" style={{ background: project.color || 'var(--blue)' }}>
                 <div className="project-card-actions">
                   <div className="dropdown">
                     <button className="btn-icon project-menu-btn" onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === project._id ? null : project._id); }}>
@@ -99,7 +97,7 @@ export default function ProjectsPage() {
                       <Avatar key={m.user?._id} name={m.user?.name} size="sm" />
                     ))}
                     {project.members?.length > 5 && (
-                      <div className="avatar avatar-sm" style={{ background: '#f3f4f6', color: '#6b7280' }}>
+                      <div className="avatar avatar-sm" style={{ background: 'var(--gray-2)', color: 'var(--text-3)' }}>
                         +{project.members.length - 5}
                       </div>
                     )}

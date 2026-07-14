@@ -4,6 +4,8 @@ import Avatar from '../components/common/Avatar';
 import { format } from 'date-fns';
 import './TeamPage.css';
 
+const ROLE_ACCENT = { admin: 'var(--purple)', manager: 'var(--accent-gold)', member: 'var(--green)' };
+
 export default function TeamPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export default function TeamPage() {
       </div>
 
       <div className="team-search-bar">
-        <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24">
+        <svg width="16" height="16" fill="none" stroke="var(--text-4)" strokeWidth="2" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
         </svg>
         <input
@@ -51,7 +53,11 @@ export default function TeamPage() {
       ) : (
         <div className="team-grid">
           {filtered.map(u => (
-            <div key={u._id} className="team-card card">
+            <div
+              key={u._id}
+              className="team-card card"
+              style={{ '--role-accent': ROLE_ACCENT[u.role] || 'var(--text-4)' }}
+            >
               <div className="team-card-top">
                 <Avatar name={u.name} size="lg" />
                 <span className={`badge badge-${u.role === 'admin' ? 'active' : u.role === 'manager' ? 'medium' : 'low'}`}>

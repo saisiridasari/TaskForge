@@ -20,13 +20,25 @@ const ACTIONS = [
   { value: 'create_reminder', label: 'Create a reminder notification' },
 ];
 
+// Same inline stroke-icon pattern as ActivityPage.js — real icons instead
+// of emoji, consistent with the rest of the app's icon language.
+const icons = {
+  move: <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />,
+  clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" strokeLinecap="round" strokeLinejoin="round" /></>,
+  userPlus: <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12.5 7a4 4 0 100 8 4 4 0 000-8zM20 8v6M23 11h-6" strokeLinecap="round" strokeLinejoin="round" />,
+  calendar: <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />,
+  checkCircle: <><path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" /><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round" /></>,
+  plus: <path d="M12 5v14M5 12h14" strokeLinecap="round" strokeLinejoin="round" />,
+  sparkle: <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" />,
+};
+
 const TRIGGER_ICONS = {
-  task_moved_to_board: '↗️',
-  task_due_soon: '⏰',
-  task_assigned: '👤',
-  project_deadline_changed: '📅',
-  task_completed: '✅',
-  task_created: '➕',
+  task_moved_to_board: icons.move,
+  task_due_soon: icons.clock,
+  task_assigned: icons.userPlus,
+  project_deadline_changed: icons.calendar,
+  task_completed: icons.checkCircle,
+  task_created: icons.plus,
 };
 
 export default function AutomationPage() {
@@ -117,7 +129,9 @@ export default function AutomationPage() {
                   <input className="form-input" style={{ marginTop: 8 }} value={form.triggerValue} onChange={e => setForm({...form, triggerValue: e.target.value})} placeholder="Board name (e.g. Done)" />
                 )}
               </div>
-              <div className="rule-arrow">↓</div>
+              <div className="rule-arrow">
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
               <div className="rule-section">
                 <div className="rule-section-label">
                   <span className="rule-badge then">THEN</span>
@@ -141,7 +155,7 @@ export default function AutomationPage() {
         <div style={{ display:'flex', justifyContent:'center', padding:60 }}><div className="spinner" style={{ width:32, height:32 }} /></div>
       ) : rules.length === 0 ? (
         <div className="empty-state" style={{ marginTop: 60 }}>
-          <svg width="48" height="48" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg width="48" height="48" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <h3>No automation rules</h3>
           <p>Add rules to automate repetitive tasks and notifications</p>
         </div>
@@ -153,7 +167,11 @@ export default function AutomationPage() {
             return (
               <div key={rule._id} className={`rule-card card ${!rule.enabled ? 'disabled' : ''}`}>
                 <div className="rule-card-header">
-                  <div className="rule-icon">{TRIGGER_ICONS[rule.trigger] || '⚡'}</div>
+                  <div className="rule-icon">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      {TRIGGER_ICONS[rule.trigger] || icons.sparkle}
+                    </svg>
+                  </div>
                   <div className="rule-info">
                     <span className="rule-name">{rule.name}</span>
                     <div className="rule-flow">
@@ -168,7 +186,7 @@ export default function AutomationPage() {
                       <input type="checkbox" checked={rule.enabled} onChange={() => handleToggle(rule)} />
                       <span className="toggle-slider" />
                     </label>
-                    <button className="btn-icon" onClick={() => handleDelete(rule._id)} title="Delete" style={{ color: '#ef4444' }}>
+                    <button className="btn-icon" onClick={() => handleDelete(rule._id)} title="Delete" style={{ color: 'var(--accent-warm)' }}>
                       <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </button>
                   </div>

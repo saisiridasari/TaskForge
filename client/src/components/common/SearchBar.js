@@ -99,7 +99,7 @@ export default function SearchBar({ compact }) {
                   <div className="search-section-label">Projects</div>
                   {results.projects.slice(0, 4).map(p => (
                     <button key={p._id} className="search-item" onClick={() => handleNavigate(`/projects/${p._id}`)}>
-                      <div className="search-item-dot" style={{ background: p.color || '#60a5fa' }} />
+                      <div className="search-item-dot" style={{ background: p.color || 'var(--blue)' }} />
                       <div className="search-item-body">
                         <span className="search-item-title">{p.title}</span>
                         <span className="search-item-sub">{p.members?.length} members</span>

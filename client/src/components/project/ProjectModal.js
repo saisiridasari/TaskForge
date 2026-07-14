@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import toast from 'react-hot-toast';
 
-const COLORS = ['#60a5fa', '#34d399', '#a78bfa', '#f472b6', '#fb923c', '#facc15', '#2dd4bf', '#818cf8'];
+// Stored as literal hex in the database (project.color), rendered
+// elsewhere (banners, dots) — so these stay actual hex, drawn from the
+// new palette instead of the old default Tailwind pastels.
+const COLORS = ['#1e88e5', '#0d47a1', '#7a8c5e', '#6b7f52', '#b8604a', '#c9a96e', '#7f9ee0', '#d4a89a'];
 
 export default function ProjectModal({ project, onClose }) {
   const { createProject, updateProject } = useProject();
@@ -11,7 +14,7 @@ export default function ProjectModal({ project, onClose }) {
     description: '',
     deadline: '',
     status: 'active',
-    color: '#60a5fa',
+    color: '#1e88e5',
   });
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +25,7 @@ export default function ProjectModal({ project, onClose }) {
         description: project.description || '',
         deadline: project.deadline ? project.deadline.split('T')[0] : '',
         status: project.status || 'active',
-        color: project.color || '#60a5fa',
+        color: project.color || '#1e88e5',
       });
     }
   }, [project]);
@@ -83,7 +86,7 @@ export default function ProjectModal({ project, onClose }) {
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {COLORS.map(c => (
                   <button key={c} type="button" onClick={() => setForm({...form, color: c})}
-                    style={{ width: 28, height: 28, borderRadius: '50%', background: c, border: form.color === c ? '3px solid #111' : '3px solid transparent', cursor: 'pointer', transition: 'border 0.1s' }}
+                    style={{ width: 28, height: 28, borderRadius: '50%', background: c, border: form.color === c ? '3px solid var(--text)' : '3px solid transparent', cursor: 'pointer', transition: 'border 0.1s' }}
                   />
                 ))}
               </div>

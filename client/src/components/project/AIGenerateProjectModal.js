@@ -4,9 +4,6 @@ import { useProject } from '../../context/ProjectContext';
 import { aiAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
-// Same modal shell/classes as ProjectModal.jsx (modal-overlay, modal,
-// modal-header, form-group, form-input, btn btn-primary) so this looks
-// native next to the manual "New Project" flow, not bolted on.
 export default function AIGenerateProjectModal({ onClose }) {
   const navigate = useNavigate();
   const { fetchProjects } = useProject();
@@ -33,12 +30,10 @@ export default function AIGenerateProjectModal({ onClose }) {
       const res = await aiAPI.generateProject({ idea: idea.trim(), techStack });
 
       toast.success(`Project generated: ${res.data.project.title} (${res.data.taskCount} tasks)`);
-      await fetchProjects(); // refresh the projects list in context before navigating away
+      await fetchProjects();
       navigate(`/projects/${res.data.project._id}`);
       onClose();
     } catch (err) {
-      // 422 = AI/validation couldn't produce a usable plan after retries —
-      // an expected failure mode, show the specific reasons if we have them.
       if (err.response?.status === 422 && err.response.data?.errors) {
         setErrors(err.response.data.errors);
         toast.error('AI could not generate a valid project plan');
@@ -87,12 +82,21 @@ export default function AIGenerateProjectModal({ onClose }) {
               </p>
             </div>
 
+            {/* FIXED: error box colors were hardcoded #fef2f2/#fecaca/#b91c1c —
+                now built from var(--accent-warm), same pattern used for
+                every other "danger/error" surface fixed today. */}
             {errors && (
-              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 12px', marginTop: 4 }}>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#b91c1c', marginBottom: 4 }}>
+              <div style={{
+                background: 'color-mix(in srgb, var(--accent-warm) 8%, var(--white))',
+                border: '1px solid color-mix(in srgb, var(--accent-warm) 35%, var(--border))',
+                borderRadius: 8,
+                padding: '10px 12px',
+                marginTop: 4,
+              }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-warm)', marginBottom: 4 }}>
                   The AI's output didn't pass validation:
                 </p>
-                <ul style={{ fontSize: 12, color: '#b91c1c', paddingLeft: 18, margin: 0 }}>
+                <ul style={{ fontSize: 12, color: 'var(--accent-warm)', paddingLeft: 18, margin: 0 }}>
                   {errors.slice(0, 5).map((e, i) => <li key={i}>{e}</li>)}
                 </ul>
               </div>

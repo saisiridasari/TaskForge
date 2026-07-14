@@ -51,7 +51,7 @@ export default function SearchPage() {
       {/* Filters */}
       <div className="search-filters">
         <div className="search-input-large">
-          <svg width="18" height="18" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24">
+          <svg width="18" height="18" fill="none" stroke="var(--text-4)" strokeWidth="2" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
           </svg>
           <input
@@ -124,7 +124,7 @@ export default function SearchPage() {
                     className="result-row"
                     style={{ borderBottom: i < results.projects.length - 1 ? '1px solid var(--border)' : 'none' }}
                   >
-                    <div className="result-dot" style={{ background: proj.color || '#60a5fa' }} />
+                    <div className="result-dot" style={{ background: proj.color || 'var(--blue)' }} />
                     <div className="result-body">
                       <span className="result-title">{proj.title}</span>
                       <span className="result-sub">{proj.description || 'No description'}</span>
@@ -168,7 +168,7 @@ export default function SearchPage() {
 
           {total === 0 && !loading && (
             <div className="empty-state" style={{ marginTop: 60 }}>
-              <svg width="48" height="48" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24">
+              <svg width="48" height="48" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
               </svg>
               <h3>No results found</h3>
@@ -180,7 +180,7 @@ export default function SearchPage() {
 
       {!results && !loading && (
         <div className="search-placeholder">
-          <svg width="56" height="56" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24">
+          <svg width="56" height="56" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/>
           </svg>
           <h3>Start searching</h3>

@@ -9,6 +9,24 @@ import './TaskModal.css';
 
 const TABS = ['details', 'comments', 'attachments', 'activity', 'ai'];
 
+// Real stroke icons replacing the old emoji file-type indicators
+// (🖼️📄📦📝📎), matching the icon language used across the rest of the app.
+const FILE_ICONS = {
+  image: <><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" /></>,
+  pdf: <><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6" /></>,
+  archive: <><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 9v12" /></>,
+  document: <><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h5" /></>,
+  paperclip: <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />,
+};
+
+function getFileIconKey(type = '') {
+  if (type.includes('image')) return 'image';
+  if (type.includes('pdf')) return 'pdf';
+  if (type.includes('zip') || type.includes('compressed')) return 'archive';
+  if (type.includes('word') || type.includes('document')) return 'document';
+  return 'paperclip';
+}
+
 export default function TaskModal({ task, boardId, projectId, members, boards, defaultDueDate, onClose }) {
   const { createTask, updateTask, deleteTask, tasks, setTasks } = useProject();
   const { user } = useAuth();
@@ -23,7 +41,6 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
   const [uploadLoading, setUploadLoading] = useState(false);
   const fileInputRef = useRef();
 
-  // Live task data from context (for real-time comment/attachment updates)
   const liveTask = task ? tasks.find(t => t._id === task._id) || task : null;
 
   useEffect(() => {
@@ -118,14 +135,6 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
     } catch { toast.error('Failed to delete attachment'); }
   };
 
-  const getFileIcon = (type = '') => {
-    if (type.includes('image')) return '🖼️';
-    if (type.includes('pdf')) return '📄';
-    if (type.includes('zip') || type.includes('compressed')) return '📦';
-    if (type.includes('word') || type.includes('document')) return '📝';
-    return '📎';
-  };
-
   const currentComments = liveTask?.comments || [];
   const currentAttachments = liveTask?.attachments || [];
 
@@ -192,7 +201,7 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
               {task && (
                 <div className="form-group">
                   <label className="form-label" style={{ display:'flex', alignItems:'center', gap:8 }}>
-                    <input type="checkbox" checked={form.completed} onChange={e => setForm({...form, completed:e.target.checked})} style={{ width:15, height:15, accentColor:'#34d399' }} />
+                    <input type="checkbox" checked={form.completed} onChange={e => setForm({...form, completed:e.target.checked})} style={{ width:15, height:15, accentColor:'var(--green)' }} />
                     Mark as completed
                   </label>
                 </div>
@@ -205,11 +214,11 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
                       const u = m.user; if (!u) return null;
                       const isAssigned = form.assignedTo.includes(u._id);
                       return (
-                        <label key={u._id} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', borderRadius:8, cursor:'pointer', background:isAssigned?'#eff6ff':'transparent', border:`1.5px solid ${isAssigned?'#bfdbfe':'#e5e7eb'}`, transition:'all 0.12s' }}>
-                          <input type="checkbox" checked={isAssigned} onChange={() => toggleAssignee(u._id)} style={{ width:15, height:15, accentColor:'#60a5fa' }} />
+                        <label key={u._id} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', borderRadius:8, cursor:'pointer', background:isAssigned?'var(--blue-light)':'transparent', border:`1.5px solid ${isAssigned?'var(--blue-mid)':'var(--border)'}`, transition:'all 0.12s' }}>
+                          <input type="checkbox" checked={isAssigned} onChange={() => toggleAssignee(u._id)} style={{ width:15, height:15, accentColor:'var(--blue)' }} />
                           <Avatar name={u.name} src={u.avatar} size="sm" />
                           <span style={{ fontSize:13, fontWeight:500 }}>{u.name}</span>
-                          <span style={{ fontSize:11, color:'#9ca3af', marginLeft:'auto' }}>{u.email}</span>
+                          <span style={{ fontSize:11, color:'var(--text-4)', marginLeft:'auto' }}>{u.email}</span>
                         </label>
                       );
                     })}
@@ -229,7 +238,7 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
               <div className="comments-list">
                 {currentComments.length === 0 ? (
                   <div className="tab-empty">
-                    <svg width="32" height="32" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <svg width="32" height="32" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     <p>No comments yet</p>
                   </div>
                 ) : (
@@ -289,14 +298,18 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
 
               {currentAttachments.length === 0 ? (
                 <div className="tab-empty">
-                  <svg width="32" height="32" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="32" height="32" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   <p>No attachments yet</p>
                 </div>
               ) : (
                 <div className="attachments-list">
                   {currentAttachments.map(att => (
                     <div key={att._id} className="attachment-item">
-                      <span className="attachment-icon">{getFileIcon(att.fileType)}</span>
+                      <div className="attachment-icon">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          {FILE_ICONS[getFileIconKey(att.fileType)]}
+                        </svg>
+                      </div>
                       <div className="attachment-info">
                         <span className="attachment-name">{att.fileName}</span>
                         <span className="attachment-meta">
@@ -307,7 +320,7 @@ export default function TaskModal({ task, boardId, projectId, members, boards, d
                         <a href={att.fileUrl} target="_blank" rel="noopener noreferrer" className="btn-icon" title="Download/View">
                           <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/></svg>
                         </a>
-                        <button className="btn-icon" style={{ color:'#ef4444' }} onClick={() => handleDeleteAttachment(att._id)} title="Delete">
+                        <button className="btn-icon" style={{ color:'var(--accent-warm)' }} onClick={() => handleDeleteAttachment(att._id)} title="Delete">
                           <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round"/></svg>
                         </button>
                       </div>
@@ -352,7 +365,7 @@ function TaskActivityFeed({ taskId }) {
   if (loading) return <div style={{ display:'flex', justifyContent:'center', padding:24 }}><div className="spinner" /></div>;
   if (!activities.length) return (
     <div className="tab-empty">
-      <svg width="32" height="32" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      <svg width="32" height="32" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeLinecap="round" strokeLinejoin="round"/></svg>
       <p>No activity recorded</p>
     </div>
   );
@@ -376,17 +389,6 @@ function TaskActivityFeed({ taskId }) {
   );
 }
 
-// NEW — Phase 3 AI panel. Same co-located pattern as TaskActivityFeed above:
-// its own local state, inline require() of the API module, reuses existing
-// CSS classes (comment-bubble, comment-meta, tab-empty, spinner, etc.) so it
-// looks native rather than bolted on.
-//
-// KNOWN LIMITATION: `exchanges` is session-only — closing and reopening the
-// task modal clears what's shown here, even though the actual Q&A is still
-// saved server-side in TaskConversation (summarization/context still works
-// correctly behind the scenes). There's no GET endpoint yet to fetch past
-// conversation history for display — a clean small addition later if you
-// want the panel to remember what was asked across sessions.
 const AI_MODES = [
   { key: 'explain', label: 'Explain' },
   { key: 'code', label: 'Generate Code' },
@@ -444,7 +446,7 @@ function TaskAIPanel({ taskId }) {
 
       {exchanges.length === 0 && !loading && (
         <div className="tab-empty">
-          <svg width="32" height="32" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24">
+          <svg width="32" height="32" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24">
             <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <p>Ask the AI something about this task, or pick an option above</p>

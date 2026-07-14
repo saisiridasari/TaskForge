@@ -26,9 +26,10 @@
 
 .task-tab:hover { color: var(--text); }
 
+/* FIXED: was hardcoded #2563eb */
 .task-tab.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--blue-deep);
+  border-bottom-color: var(--blue-deep);
   font-weight: 600;
 }
 
@@ -114,7 +115,8 @@
   transition: opacity 0.1s;
 }
 .comment-item:hover .comment-delete { opacity: 1; }
-.comment-delete:hover { color: #ef4444; }
+/* FIXED: was hardcoded #ef4444 */
+.comment-delete:hover { color: var(--accent-warm); }
 
 .comment-text {
   font-size: 13px;
@@ -178,7 +180,20 @@
 }
 .attachment-item:hover { background: var(--white); }
 
-.attachment-icon { font-size: 20px; flex-shrink: 0; }
+/* FIXED: was a bare emoji with just font-size — now a proper icon chip,
+   matching the icon-box treatment used elsewhere (search results,
+   notifications, etc.) instead of a floating unstyled glyph. */
+.attachment-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--blue-light);
+  color: var(--blue-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
 .attachment-info { flex: 1; min-width: 0; }
 

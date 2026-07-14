@@ -4,13 +4,41 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useProject } from '../context/ProjectContext';
+import { useTheme } from '../context/ThemeContext';
 import { taskAPI, projectAPI } from '../services/api';
 import TaskModal from '../components/task/TaskModal';
 import toast from 'react-hot-toast';
 import './CalendarPage.css';
 
+// FullCalendar takes literal color strings, not CSS variables — so event
+// colors need to be theme-aware here in JS, matching the same palette
+// values defined in index.css for each mode.
+const EVENT_STYLES = {
+  light: {
+    completed: { bg: '#e0e9d6', border: '#7a8c5e', text: '#2c2416' },
+    high: { bg: '#f3ddd6', border: '#b8604a', text: '#2c2416' },
+    medium: { bg: '#f7ecd6', border: '#c9a96e', text: '#2c2416' },
+    low: { bg: '#e3f2fd', border: '#1e88e5', text: '#2c2416' },
+  },
+  dark: {
+    completed: { bg: '#1c2417', border: '#9fb37e', text: '#edf2fb' },
+    high: { bg: '#2e1b16', border: '#d97a63', text: '#edf2fb' },
+    medium: { bg: '#2e2416', border: '#d9bc8a', text: '#edf2fb' },
+    low: { bg: '#16294a', border: '#2196f3', text: '#edf2fb' },
+  },
+};
+
+// Simple inline info icon, replacing the emoji previously passed to toast().
+const InfoIcon = () => (
+  <svg width="16" height="16" fill="none" stroke="var(--blue)" strokeWidth="2" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4M12 8h.01" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 export default function CalendarPage() {
   const { projects, fetchProjects, boards } = useProject();
+  const { theme } = useTheme();
   const [events, setEvents] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState('all');
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -23,7 +51,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     loadAllTasks();
-  }, [projects, selectedProjectId]);
+  }, [projects, selectedProjectId, theme]);
 
   const loadAllTasks = async () => {
     if (!projects.length) return;
@@ -33,22 +61,21 @@ export default function CalendarPage() {
         ? projects
         : projects.filter(p => p._id === selectedProjectId);
 
+      const styles = EVENT_STYLES[theme] || EVENT_STYLES.light;
       const allTasks = [];
       for (const proj of filteredProjects) {
         const res = await taskAPI.getByProject(proj._id);
         res.data.tasks.forEach(task => {
           if (task.dueDate) {
+            const category = task.completed ? 'completed' : (task.priority || 'low');
+            const style = styles[category] || styles.low;
             allTasks.push({
               id: task._id,
               title: task.title,
               date: task.dueDate,
-              backgroundColor: task.completed ? '#34d399'
-                : task.priority === 'high' ? '#fca5a5'
-                : task.priority === 'medium' ? '#fde68a' : '#bfdbfe',
-              borderColor: task.completed ? '#10b981'
-                : task.priority === 'high' ? '#ef4444'
-                : task.priority === 'medium' ? '#f59e0b' : '#60a5fa',
-              textColor: '#111827',
+              backgroundColor: style.bg,
+              borderColor: style.border,
+              textColor: style.text,
               extendedProps: { task, projectId: proj._id, projectTitle: proj.title },
             });
           }
@@ -68,7 +95,7 @@ export default function CalendarPage() {
 
   const handleDateClick = (info) => {
     if (selectedProjectId === 'all') {
-      toast('Select a specific project to create tasks', { icon: '💡' });
+      toast('Select a specific project to create tasks', { icon: <InfoIcon /> });
       return;
     }
     setNewTaskDate(info.dateStr);
@@ -98,6 +125,7 @@ export default function CalendarPage() {
     : [];
 
   const firstBoardId = currentBoardsForProject[0]?._id;
+  const legendStyles = EVENT_STYLES[theme] || EVENT_STYLES.light;
 
   return (
     <div className="calendar-page fade-in">
@@ -118,10 +146,10 @@ export default function CalendarPage() {
       </div>
 
       <div className="calendar-legend">
-        <span className="legend-item"><span className="legend-dot" style={{ background: '#fca5a5' }} /> High</span>
-        <span className="legend-item"><span className="legend-dot" style={{ background: '#fde68a' }} /> Medium</span>
-        <span className="legend-item"><span className="legend-dot" style={{ background: '#bfdbfe' }} /> Low</span>
-        <span className="legend-item"><span className="legend-dot" style={{ background: '#34d399' }} /> Completed</span>
+        <span className="legend-item"><span className="legend-dot" style={{ background: legendStyles.high.border }} /> High</span>
+        <span className="legend-item"><span className="legend-dot" style={{ background: legendStyles.medium.border }} /> Medium</span>
+        <span className="legend-item"><span className="legend-dot" style={{ background: legendStyles.low.border }} /> Low</span>
+        <span className="legend-item"><span className="legend-dot" style={{ background: legendStyles.completed.border }} /> Completed</span>
       </div>
 
       <div className="calendar-wrapper card">

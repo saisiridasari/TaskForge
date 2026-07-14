@@ -178,10 +178,12 @@ export default function ProfilePage() {
     finally { setAvatarLoading(false); e.target.value = ''; }
   };
 
+  // FIXED: all hardcoded hex -> theme variables, so role badges re-theme
+  // correctly in dark mode instead of staying stuck in light-mode colors.
   const getRoleBadgeStyle = (role) => {
-    if (role === 'admin')   return { background:'#ede9fe', color:'#6d28d9' };
-    if (role === 'manager') return { background:'#fef3c7', color:'#92400e' };
-    return { background:'#d1fae5', color:'#065f46' };
+    if (role === 'admin')   return { background: 'var(--purple-light)', color: 'var(--purple)' };
+    if (role === 'manager') return { background: 'color-mix(in srgb, var(--accent-gold) 22%, var(--white))', color: '#8a6d2f' };
+    return { background: 'var(--green-light)', color: 'var(--green)' };
   };
 
   /* ── Tab panels ───────────────────────────────────────────────── */
@@ -195,10 +197,10 @@ export default function ProfilePage() {
 
           {/* Stats row */}
           <div className="pf-stats-row">
-            <StatCard label="Projects"       value={stats?.totalProjects}  iconKey="briefcase" accentBg="#eff6ff" accentColor="#2563eb" />
-            <StatCard label="Active Tasks"   value={stats?.activeTasks}    iconKey="activity"  accentBg="#f5f3ff" accentColor="#7c3aed" />
-            <StatCard label="Completed"      value={stats?.completedTasks} iconKey="check"     accentBg="#ecfdf5" accentColor="#059669" />
-            <StatCard label="Due Soon"       value={stats?.pendingDeadlines} iconKey="clock"   accentBg="#fefce8" accentColor="#d97706" />
+            <StatCard label="Projects"       value={stats?.totalProjects}  iconKey="briefcase" accentBg="var(--blue-light)" accentColor="var(--blue-deep)" />
+            <StatCard label="Active Tasks"   value={stats?.activeTasks}    iconKey="activity"  accentBg="var(--purple-light)" accentColor="var(--purple)" />
+            <StatCard label="Completed"      value={stats?.completedTasks} iconKey="check"     accentBg="var(--green-light)" accentColor="var(--green)" />
+            <StatCard label="Due Soon"       value={stats?.pendingDeadlines} iconKey="clock"   accentBg="color-mix(in srgb, var(--accent-gold) 20%, var(--white))" accentColor="var(--accent-gold)" />
           </div>
 
           {/* Role info card */}
@@ -227,14 +229,14 @@ export default function ProfilePage() {
           {/* Role permissions */}
           <div className="pf-permissions-card">
             <div className="pf-permissions-title">
-              <Icon d={ICONS.shield} size={15} stroke="#7c3aed" />
+              <Icon d={ICONS.shield} size={15} stroke="var(--purple)" />
               Role Permissions — <span style={{ textTransform:'capitalize' }}>{user?.role}</span>
             </div>
             <div className="pf-permissions-grid">
               {getPermissions(user?.role).map(p => (
                 <div key={p.label} className={`pf-permission-item ${p.granted ? 'granted' : 'denied'}`}>
                   <Icon d={p.granted ? ICONS.check : 'M18 6L6 18M6 6l12 12'} size={13}
-                    stroke={p.granted ? '#059669' : '#dc2626'} />
+                    stroke={p.granted ? 'var(--green)' : 'var(--accent-warm)'} />
                   {p.label}
                 </div>
               ))}
@@ -251,7 +253,7 @@ export default function ProfilePage() {
               <div className="pf-projects-list">
                 {myProjects.slice(0, 5).map(p => (
                   <div key={p._id} className="pf-project-row">
-                    <div className="pf-project-dot" style={{ background: p.color || '#60a5fa' }} />
+                    <div className="pf-project-dot" style={{ background: p.color || 'var(--blue)' }} />
                     <span className="pf-project-name">{p.title}</span>
                     <span className={`badge badge-${p.status}`}>{p.status}</span>
                     {p.deadline && (
@@ -375,7 +377,7 @@ export default function ProfilePage() {
             ))}
 
             <div className="pf-password-tips">
-              <div className="pf-tip-title"><Icon d={ICONS.info} size={14} stroke="#2563eb" /> Tips for a strong password</div>
+              <div className="pf-tip-title"><Icon d={ICONS.info} size={14} stroke="var(--blue-deep)" /> Tips for a strong password</div>
               <ul className="pf-tip-list">
                 <li>At least 8 characters</li>
                 <li>Mix of uppercase and lowercase</li>
@@ -431,7 +433,7 @@ export default function ProfilePage() {
             </div>
           ) : myActivity.length === 0 ? (
             <div className="pf-empty">
-              <Icon d={ICONS.activity} size={40} stroke="#d1d5db" />
+              <Icon d={ICONS.activity} size={40} stroke="var(--text-4)" />
               <p>No activity recorded yet</p>
             </div>
           ) : (
@@ -464,8 +466,8 @@ export default function ProfilePage() {
 
           <div className="pf-security-card">
             <div className="pf-security-row">
-              <div className="pf-security-icon" style={{ background:'#ecfdf5' }}>
-                <Icon d={ICONS.shield} size={18} stroke="#059669" />
+              <div className="pf-security-icon" style={{ background: 'var(--green-light)' }}>
+                <Icon d={ICONS.shield} size={18} stroke="var(--green)" />
               </div>
               <div className="pf-security-info">
                 <span className="pf-security-label">Password protection</span>
@@ -477,15 +479,15 @@ export default function ProfilePage() {
             </div>
 
             <div className="pf-security-row">
-              <div className="pf-security-icon" style={{ background:'#eff6ff' }}>
-                <Icon d={ICONS.mail} size={18} stroke="#2563eb" />
+              <div className="pf-security-icon" style={{ background: 'var(--blue-light)' }}>
+                <Icon d={ICONS.mail} size={18} stroke="var(--blue-deep)" />
               </div>
               <div className="pf-security-info">
                 <span className="pf-security-label">Email verification</span>
                 <span className="pf-security-sub">{user?.email}</span>
               </div>
               <span className="pf-verified-badge">
-                <Icon d={ICONS.check} size={12} stroke="#059669" /> Verified
+                <Icon d={ICONS.check} size={12} stroke="var(--green)" /> Verified
               </span>
             </div>
           </div>
@@ -507,7 +509,7 @@ export default function ProfilePage() {
 
           <div className="pf-danger-zone">
             <div className="pf-danger-title">
-              <Icon d={ICONS.info} size={15} stroke="#dc2626" />
+              <Icon d={ICONS.info} size={15} stroke="var(--accent-warm)" />
               Danger Zone
             </div>
             <div className="pf-danger-row">
@@ -516,7 +518,7 @@ export default function ProfilePage() {
                 <div className="pf-danger-sub">This will invalidate your current token</div>
               </div>
               <button className="btn btn-danger btn-sm" onClick={() => { logout(); window.location.href = '/login'; }}>
-                <Icon d={ICONS.logout} size={14} stroke="#dc2626" /> Sign out
+                <Icon d={ICONS.logout} size={14} stroke="var(--accent-warm)" /> Sign out
               </button>
             </div>
           </div>
@@ -573,15 +575,15 @@ export default function ProfilePage() {
           <SectionHeader title="Workspace" subtitle="Overview of your team and project workspace" />
 
           <div className="pf-stats-row" style={{ marginBottom:28 }}>
-            <StatCard label="Total Projects"  value={myProjects.length}                                iconKey="briefcase" accentBg="#eff6ff"  accentColor="#2563eb" />
-            <StatCard label="Active Projects" value={myProjects.filter(p=>p.status==='active').length}  iconKey="activity"  accentBg="#ecfdf5"  accentColor="#059669" />
-            <StatCard label="On Hold"         value={myProjects.filter(p=>p.status==='on-hold').length} iconKey="clock"     accentBg="#fefce8"  accentColor="#d97706" />
-            <StatCard label="Completed"       value={myProjects.filter(p=>p.status==='completed').length} iconKey="star"   accentBg="#f5f3ff"  accentColor="#7c3aed" />
+            <StatCard label="Total Projects"  value={myProjects.length}                                iconKey="briefcase" accentBg="var(--blue-light)"  accentColor="var(--blue-deep)" />
+            <StatCard label="Active Projects" value={myProjects.filter(p=>p.status==='active').length}  iconKey="activity"  accentBg="var(--green-light)"  accentColor="var(--green)" />
+            <StatCard label="On Hold"         value={myProjects.filter(p=>p.status==='on-hold').length} iconKey="clock"     accentBg="color-mix(in srgb, var(--accent-gold) 20%, var(--white))"  accentColor="var(--accent-gold)" />
+            <StatCard label="Completed"       value={myProjects.filter(p=>p.status==='completed').length} iconKey="star"   accentBg="var(--purple-light)"  accentColor="var(--purple)" />
           </div>
 
           {user?.role === 'admin' && (
             <div className="pf-admin-notice">
-              <Icon d={ICONS.shield} size={16} stroke="#7c3aed" />
+              <Icon d={ICONS.shield} size={16} stroke="var(--purple)" />
               <div>
                 <div className="pf-admin-notice-title">Admin privileges active</div>
                 <div className="pf-admin-notice-sub">You have full access to all projects, boards, tasks, and team management across the workspace.</div>
@@ -603,7 +605,7 @@ export default function ProfilePage() {
                 {myProjects.map(p => (
                   <div key={p._id} className="pf-table-row">
                     <div className="pf-table-project">
-                      <div className="pf-project-dot" style={{ background: p.color||'#60a5fa' }} />
+                      <div className="pf-project-dot" style={{ background: p.color || 'var(--blue)' }} />
                       <span>{p.title}</span>
                     </div>
                     <span className={`badge badge-${p.status}`}>{p.status}</span>
@@ -656,7 +658,7 @@ export default function ProfilePage() {
               <button key={tab.id} className={`profile-tab ${activeTab===tab.id?'active':''}`} onClick={() => setActiveTab(tab.id)}>
                 <Icon d={ICONS[tab.icon]} size={16} />
                 {tab.label}
-                {activeTab===tab.id && <Icon d={ICONS.chevronRight} size={13} stroke="#2563eb" style={{ marginLeft:'auto' }} />}
+                {activeTab===tab.id && <Icon d={ICONS.chevronRight} size={13} stroke="var(--blue-deep)" style={{ marginLeft:'auto' }} />}
               </button>
             ))}
           </nav>

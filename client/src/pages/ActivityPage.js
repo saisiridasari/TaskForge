@@ -5,22 +5,45 @@ import Avatar from '../components/common/Avatar';
 import { formatDistanceToNow } from 'date-fns';
 import './ActivityPage.css';
 
-const ACTION_ICONS = {
-  task_created: { icon: '✅', bg: '#d1fae5' },
-  task_updated: { icon: '✏️', bg: '#dbeafe' },
-  task_deleted: { icon: '🗑️', bg: '#fee2e2' },
-  task_moved: { icon: '↗️', bg: '#ede9fe' },
-  task_completed: { icon: '🎉', bg: '#d1fae5' },
-  deadline_changed: { icon: '📅', bg: '#fef3c7' },
-  user_assigned: { icon: '👤', bg: '#dbeafe' },
-  user_removed: { icon: '👋', bg: '#fee2e2' },
-  board_created: { icon: '📋', bg: '#dbeafe' },
-  board_deleted: { icon: '🗑️', bg: '#fee2e2' },
-  project_updated: { icon: '📁', bg: '#ede9fe' },
-  comment_added: { icon: '💬', bg: '#fef3c7' },
-  attachment_added: { icon: '📎', bg: '#dbeafe' },
-  attachment_deleted: { icon: '🗑️', bg: '#fee2e2' },
-  default: { icon: '🔔', bg: '#f3f4f6' },
+// Small inline icon set, matching the same stroke-icon language used
+// elsewhere in the app (nav items, task cards) rather than emoji.
+const icons = {
+  check: <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />,
+  edit: <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />,
+  trash: <><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" strokeLinecap="round" strokeLinejoin="round" /></>,
+  move: <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />,
+  checkCircle: <><path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" strokeLinejoin="round" /><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round" /></>,
+  calendar: <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />,
+  userPlus: <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12.5 7a4 4 0 100 8 4 4 0 000-8zM20 8v6M23 11h-6" strokeLinecap="round" strokeLinejoin="round" />,
+  userMinus: <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12.5 7a4 4 0 100 8 4 4 0 000-8zM23 11h-6" strokeLinecap="round" strokeLinejoin="round" />,
+  board: <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" strokeLinecap="round" strokeLinejoin="round" />,
+  folder: <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />,
+  comment: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />,
+  paperclip: <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" strokeLinecap="round" strokeLinejoin="round" />,
+  sparkle: <path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round" />,
+  bell: <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />,
+};
+
+// Category drives color (theme-aware, via CSS classes in ActivityPage.css)
+// — not per-action hex values, so this stays correct across light/dark mode
+// without any changes here if the theme changes later.
+const ACTION_META = {
+  task_created: { icon: icons.check, category: 'success' },
+  task_updated: { icon: icons.edit, category: 'info' },
+  task_deleted: { icon: icons.trash, category: 'danger' },
+  task_moved: { icon: icons.move, category: 'accent' },
+  task_completed: { icon: icons.checkCircle, category: 'success' },
+  deadline_changed: { icon: icons.calendar, category: 'warning' },
+  user_assigned: { icon: icons.userPlus, category: 'info' },
+  user_removed: { icon: icons.userMinus, category: 'danger' },
+  board_created: { icon: icons.board, category: 'info' },
+  board_deleted: { icon: icons.trash, category: 'danger' },
+  project_updated: { icon: icons.folder, category: 'accent' },
+  comment_added: { icon: icons.comment, category: 'warning' },
+  attachment_added: { icon: icons.paperclip, category: 'info' },
+  attachment_deleted: { icon: icons.trash, category: 'danger' },
+  ai_project_generated: { icon: icons.sparkle, category: 'accent' },
+  default: { icon: icons.bell, category: 'neutral' },
 };
 
 export default function ActivityPage() {
@@ -64,7 +87,7 @@ export default function ActivityPage() {
         </div>
       ) : activities.length === 0 ? (
         <div className="empty-state" style={{ marginTop: 60 }}>
-          <svg width="48" height="48" fill="none" stroke="#d1d5db" strokeWidth="1.5" viewBox="0 0 24 24">
+          <svg width="48" height="48" fill="none" stroke="var(--text-4)" strokeWidth="1.5" viewBox="0 0 24 24">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           <h3>No activity yet</h3>
@@ -73,11 +96,15 @@ export default function ActivityPage() {
       ) : (
         <div className="activity-timeline">
           {activities.map((activity, i) => {
-            const meta = ACTION_ICONS[activity.actionType] || ACTION_ICONS.default;
+            const meta = ACTION_META[activity.actionType] || ACTION_META.default;
             return (
               <div key={activity._id} className="activity-item">
                 <div className="activity-icon-col">
-                  <div className="activity-icon" style={{ background: meta.bg }}>{meta.icon}</div>
+                  <div className={`activity-icon activity-icon-${meta.category}`}>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      {meta.icon}
+                    </svg>
+                  </div>
                   {i < activities.length - 1 && <div className="activity-line" />}
                 </div>
                 <div className="activity-content">

@@ -36,25 +36,24 @@ export default function RegisterPage() {
     <div className="auth-page">
       <div className="auth-left">
         <div className="auth-branding">
-          <div className="auth-logo">
+          <Link to="/" className="auth-logo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="8" height="8" rx="2" fill="#60a5fa"/>
-              <rect x="13" y="3" width="8" height="8" rx="2" fill="#a78bfa"/>
-              <rect x="3" y="13" width="8" height="8" rx="2" fill="#34d399"/>
-              <rect x="13" y="13" width="8" height="8" rx="2" fill="#60a5fa" opacity="0.5"/>
+              <rect x="3" y="3" width="8" height="8" rx="2" fill="var(--blue)"/>
+              <rect x="13" y="3" width="8" height="8" rx="2" fill="var(--purple)"/>
+              <rect x="3" y="13" width="8" height="8" rx="2" fill="var(--green)"/>
+              <rect x="13" y="13" width="8" height="8" rx="2" fill="var(--blue)" opacity="0.5"/>
             </svg>
             <span>TaskForge</span>
-          </div>
+          </Link>
           <h1 className="auth-tagline">Start organizing<br />your work today.</h1>
-          <p className="auth-desc">Create your free account and invite your team in minutes.</p>
-          <div className="auth-features">
-            {['Free to get started', 'Unlimited projects & tasks', 'Secure JWT authentication'].map(f => (
-              <div key={f} className="auth-feature">
-                <span className="auth-feature-dot" />
-                {f}
-              </div>
-            ))}
-          </div>
+          <p className="auth-desc">
+            Create your free account and invite your team — Kanban boards, AI project
+            planning, and real-time collaboration, all in one workspace.
+          </p>
+          <Link to="/" className="auth-back-link">
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Back to home
+          </Link>
         </div>
       </div>
 

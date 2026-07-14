@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
 import { useSocket } from '../../context/SocketContext';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../common/Avatar';
 import SearchBar from '../common/SearchBar';
 import './AppLayout.css';
@@ -11,8 +12,20 @@ export default function AppLayout() {
   const { user, logout } = useAuth();
   const { unreadCount, fetchNotifications } = useNotification();
   const { isConnected } = useSocket();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // NEW — collapsible desktop sidebar (icon-only mode). Persisted so the
+  // choice survives a refresh, same pattern as ThemeContext. Scoped to
+  // desktop only via CSS (see .sidebar.collapsed inside the media query
+  // in AppLayout.css) — collapsing doesn't make sense on the mobile
+  // overlay pattern, so it's disabled there regardless of this state.
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('taskflow_sidebar_collapsed') === 'true');
+
+  useEffect(() => {
+    localStorage.setItem('taskflow_sidebar_collapsed', collapsed);
+  }, [collapsed]);
 
   useEffect(() => {
     fetchNotifications();
@@ -36,20 +49,40 @@ export default function AppLayout() {
     <div className="app-layout">
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
 
-      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''} ${collapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="logo">
             <div className="logo-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="8" height="8" rx="2" fill="#60a5fa"/>
-                <rect x="13" y="3" width="8" height="8" rx="2" fill="#a78bfa"/>
-                <rect x="3" y="13" width="8" height="8" rx="2" fill="#34d399"/>
-                <rect x="13" y="13" width="8" height="8" rx="2" fill="#60a5fa" opacity="0.5"/>
+                <rect x="3" y="3" width="8" height="8" rx="2" fill="var(--blue)"/>
+                <rect x="13" y="3" width="8" height="8" rx="2" fill="var(--purple)"/>
+                <rect x="3" y="13" width="8" height="8" rx="2" fill="var(--green)"/>
+                <rect x="13" y="13" width="8" height="8" rx="2" fill="var(--blue)" opacity="0.5"/>
               </svg>
             </div>
+            {/* Hidden via CSS when collapsed, not conditionally unmounted —
+                keeps the transition smooth instead of text popping in/out abruptly. */}
             <span className="logo-text">TaskForge</span>
           </div>
-          <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`} title={isConnected ? 'Live' : 'Offline'} />
+          <div className="sidebar-header-actions">
+            <button
+              className="btn-icon"
+              onClick={toggleTheme}
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {theme === 'light' ? (
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="5"/>
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" strokeLinecap="round"/>
+                </svg>
+              )}
+            </button>
+            <div className={`connection-dot ${isConnected ? 'connected' : 'disconnected'}`} title={isConnected ? 'Live' : 'Offline'} />
+          </div>
         </div>
 
         <nav className="sidebar-nav">
@@ -60,15 +93,32 @@ export default function AppLayout() {
               to={item.to}
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
               onClick={() => setSidebarOpen(false)}
+              title={collapsed ? item.label : undefined}
             >
               <svg width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                 <path d={item.icon} />
               </svg>
-              <span>{item.label}</span>
+              <span className="nav-item-label">{item.label}</span>
               {item.badge > 0 && <span className="nav-badge">{item.badge > 9 ? '9+' : item.badge}</span>}
             </NavLink>
           ))}
         </nav>
+
+        {/* NEW — collapse toggle, pinned above the footer. Chevron flips
+            direction based on state so it always points "the way this
+            click will move the edge." */}
+        <button
+          className="sidebar-collapse-btn"
+          onClick={() => setCollapsed((c) => !c)}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            {collapsed
+              ? <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+              : <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />}
+          </svg>
+          <span className="nav-item-label">Collapse</span>
+        </button>
 
         <div className="sidebar-footer">
           <div className="user-info">
@@ -95,9 +145,9 @@ export default function AppLayout() {
           </button>
           <div className="topbar-logo">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="8" height="8" rx="2" fill="#60a5fa"/>
-              <rect x="13" y="3" width="8" height="8" rx="2" fill="#a78bfa"/>
-              <rect x="3" y="13" width="8" height="8" rx="2" fill="#34d399"/>
+              <rect x="3" y="3" width="8" height="8" rx="2" fill="var(--blue)"/>
+              <rect x="13" y="3" width="8" height="8" rx="2" fill="var(--purple)"/>
+              <rect x="3" y="13" width="8" height="8" rx="2" fill="var(--green)"/>
             </svg>
             <span>TaskForge</span>
           </div>

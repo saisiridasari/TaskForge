@@ -6,29 +6,68 @@
   padding: 0;
 }
 
+/*
+  THEME SYSTEM
+  ------------
+  Same variable NAMES your components already use (--blue, --text, --border,
+  etc.) — only the VALUES changed. This means every existing CSS file that
+  references var(--x) re-themes automatically, with zero edits needed to
+  those files.
+
+  Palette sources:
+  - Blue scale: your alice-blue -> cobalt-blue ramp (given)
+  - Warm/botanical: your parchment/ink/stem/petal/accent set (given)
+  - Cool lavender/periwinkle: given, used mainly for dark-mode text tones
+
+  Dark mode values marked "DERIVED" below did not come from your three
+  palettes (all three were light-oriented) — I built them from your
+  cobalt-blue/ocean-deep as a consistent seed so light/dark feel like one
+  product, not two unrelated themes.
+*/
+
 :root {
-  --blue: #60a5fa;
-  --blue-light: #eff6ff;
-  --blue-mid: #bfdbfe;
-  --green: #34d399;
-  --green-light: #ecfdf5;
-  --green-mid: #a7f3d0;
-  --purple: #a78bfa;
-  --purple-light: #f5f3ff;
-  --purple-mid: #ddd6fe;
-  --gray: #e5e7eb;
-  --gray-2: #f3f4f6;
-  --gray-3: #d1d5db;
-  --text: #111827;
-  --text-2: #374151;
-  --text-3: #6b7280;
-  --text-4: #9ca3af;
-  --white: #ffffff;
-  --border: #e5e7eb;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.06);
+  /* Core blue scale (yours) */
+  --blue: #1e88e5;         /* brilliant-azure — primary interactive color */
+  --blue-light: #e3f2fd;   /* alice-blue — light tinted backgrounds */
+  --blue-mid: #bbdefb;     /* icy-blue — mid tint, badges */
+  --blue-deep: #0d47a1;    /* cobalt-blue — hover/emphasis states */
+
+  /* Warm/botanical accents (yours) — used for success/low-priority + tags */
+  --green: #7a8c5e;        /* stem */
+  --green-light: #eef2e8;  /* derived light tint of stem, for badge backgrounds */
+  --green-mid: #b8c9a8;    /* petal4 */
+
+  /* Repurposed "purple" slot -> cool periwinkle (closest cool accent you have;
+     true purple wasn't in any of your three palettes) */
+  --purple: #7f9ee0;       /* derived from periwinkle-3 / baby-blue-ice, deepened for contrast */
+  --purple-light: #e2eafc; /* lavender */
+  --purple-mid: #ccdbfd;   /* periwinkle */
+
+  /* Warm neutrals for surfaces (yours) */
+  --gray: #e8e2d6;         /* derived warm gray between tag-bg and border */
+  --gray-2: #ede9e0;       /* tag-bg */
+  --gray-3: #d8cfc0;       /* derived, deeper warm gray for stronger borders */
+
+  /* Text (yours — ink/muted) */
+  --text: #2c2416;         /* ink */
+  --text-2: #4a3f30;       /* derived, one step lighter than ink */
+  --text-3: #7a6f60;       /* muted */
+  --text-4: #a89e8f;       /* derived, lighter muted for placeholders/hints */
+
+  /* Surfaces (yours — parchment/paper/card-bg) */
+  --white: #fffdf9;        /* card-bg — used for cards, modals, inputs */
+  --bg-page: #faf8f4;      /* parchment — the actual page background, one
+                               step deeper than card surfaces for subtle depth */
+  --border: #e0d8cc;       /* yours */
+
+  /* Semantic accent (yours — rust/gold, used for priority + status) */
+  --accent-warm: #b8604a;   /* rust — high priority, danger-adjacent */
+  --accent-gold: #c9a96e;   /* warm-gold — medium priority */
+
+  --shadow-sm: 0 1px 3px rgba(44,36,22,0.07), 0 1px 2px rgba(44,36,22,0.05);
+  --shadow: 0 4px 12px rgba(44,36,22,0.07), 0 2px 6px rgba(44,36,22,0.05);
+  --shadow-md: 0 8px 24px rgba(44,36,22,0.09), 0 4px 12px rgba(44,36,22,0.05);
+  --shadow-lg: 0 16px 48px rgba(44,36,22,0.11), 0 8px 24px rgba(44,36,22,0.07);
   --radius-sm: 6px;
   --radius: 10px;
   --radius-md: 14px;
@@ -36,22 +75,66 @@
   --radius-xl: 24px;
 }
 
+/* DARK MODE — toggled via [data-theme="dark"] on <html>, set by ThemeContext */
+[data-theme="dark"] {
+  /* FIXED: cool-sky (#64b5f6) was too light for white button text to read
+     against clearly (a real WCAG contrast failure I caught while working
+     on the calendar page). dodger-blue is still bright enough to pop
+     against navy, but dark enough that white text on solid --blue buttons
+     stays legible. --blue-deep now correctly reads as "darker/stronger"
+     again, matching how it behaves in light mode. */
+  --blue: #2196f3;          /* dodger-blue */
+  --blue-light: #16294a;    /* DERIVED — subtle blue-tinted panel bg */
+  --blue-mid: #6b8cc9;      /* DERIVED, between periwinkle and cobalt for dark-mode mid accents */
+  --blue-deep: #1e88e5;     /* brilliant-azure — darker than --blue, correct for hover/emphasis */
+
+  --green: #9fb37e;         /* DERIVED — stem, brightened for dark-bg contrast */
+  --green-light: #1c2417;  /* DERIVED — dark sage-tinted panel bg */
+  --green-mid: #6b7f52;     /* accent2, deep enough to sit on dark bg as a mid tone */
+
+  --purple: #abc4ff;        /* baby-blue-ice — light cool accent, reads clearly on dark */
+  --purple-light: #1a2340;  /* DERIVED — dark periwinkle-tinted panel bg */
+  --purple-mid: #4a5f8f;    /* DERIVED mid tone */
+
+  --gray: #16233a;          /* DERIVED navy-gray scale */
+  --gray-2: #1c2a44;        /* DERIVED */
+  --gray-3: #2a3b58;        /* DERIVED */
+
+  --text: #edf2fb;          /* alice-blue (lavender family) — high-contrast body text on dark */
+  --text-2: #d7e3fc;        /* lavender-2 */
+  --text-3: #8fa3c9;        /* DERIVED muted secondary text */
+  --text-4: #5c6b85;        /* DERIVED, dimmer hint text */
+
+  --white: #111f35;         /* DERIVED — card/modal surface, one step lighter than page bg */
+  --bg-page: #0a1628;       /* DERIVED — deep navy page background, seeded from cobalt-blue */
+  --border: #1f3352;        /* DERIVED subtle navy border */
+
+  --accent-warm: #d97a63;   /* rust, lightened slightly for dark-bg legibility */
+  --accent-gold: #d9bc8a;   /* warm-gold, lightened slightly for dark-bg legibility */
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.30), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow: 0 4px 12px rgba(0,0,0,0.32), 0 2px 6px rgba(0,0,0,0.22);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.36), 0 4px 12px rgba(0,0,0,0.24);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.42), 0 8px 24px rgba(0,0,0,0.28);
+}
+
 html { font-size: 16px; }
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--white);
+  background: var(--bg-page);
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--gray-3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-4); }
 
 a { text-decoration: none; color: inherit; }
 
@@ -95,7 +178,7 @@ input, textarea, select {
 .app-layout {
   display: flex;
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--bg-page);
 }
 
 .main-content {
@@ -137,11 +220,11 @@ input, textarea, select {
 .btn-primary {
   background: var(--blue);
   color: white;
-  box-shadow: 0 2px 8px rgba(96,165,250,0.3);
+  box-shadow: 0 2px 8px rgba(30,136,229,0.3);
 }
 .btn-primary:hover {
-  background: #3b82f6;
-  box-shadow: 0 4px 14px rgba(96,165,250,0.4);
+  background: var(--blue-deep);
+  box-shadow: 0 4px 14px rgba(30,136,229,0.4);
   transform: translateY(-1px);
 }
 
@@ -156,10 +239,12 @@ input, textarea, select {
 }
 
 .btn-danger {
-  background: #fee2e2;
-  color: #dc2626;
+  background: color-mix(in srgb, var(--accent-warm) 18%, var(--white));
+  color: var(--accent-warm);
 }
-.btn-danger:hover { background: #fecaca; }
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--accent-warm) 30%, var(--white));
+}
 
 .btn-ghost {
   background: transparent;
@@ -216,7 +301,7 @@ input, textarea, select {
 }
 .form-input:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
+  box-shadow: 0 0 0 3px rgba(30,136,229,0.14);
 }
 .form-input::placeholder { color: var(--text-4); }
 
@@ -233,7 +318,7 @@ select.form-input {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(44,36,22,0.35);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -277,7 +362,7 @@ select.form-input {
   justify-content: flex-end;
 }
 
-/* Badge */
+/* Badge — priority/status colors now mapped to the warm accent set */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -289,12 +374,12 @@ select.form-input {
   text-transform: uppercase;
 }
 
-.badge-high { background: #fee2e2; color: #dc2626; }
-.badge-medium { background: #fef3c7; color: #d97706; }
-.badge-low { background: #d1fae5; color: #059669; }
-.badge-active { background: var(--blue-light); color: #2563eb; }
-.badge-completed { background: var(--green-light); color: #059669; }
-.badge-on-hold { background: #f3f4f6; color: var(--text-3); }
+.badge-high { background: color-mix(in srgb, var(--accent-warm) 16%, var(--white)); color: var(--accent-warm); }
+.badge-medium { background: color-mix(in srgb, var(--accent-gold) 22%, var(--white)); color: #8a6d2f; }
+.badge-low { background: var(--green-light); color: var(--green); }
+.badge-active { background: var(--blue-light); color: var(--blue-deep); }
+.badge-completed { background: var(--green-light); color: var(--green); }
+.badge-on-hold { background: var(--gray-2); color: var(--text-3); }
 
 /* Avatar */
 .avatar {
@@ -302,7 +387,7 @@ select.form-input {
   height: 32px;
   border-radius: 50%;
   background: var(--blue-mid);
-  color: #2563eb;
+  color: var(--blue-deep);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -374,8 +459,8 @@ select.form-input {
   transition: background 0.1s;
 }
 .dropdown-item:hover { background: var(--gray-2); }
-.dropdown-item.danger { color: #dc2626; }
-.dropdown-item.danger:hover { background: #fee2e2; }
+.dropdown-item.danger { color: var(--accent-warm); }
+.dropdown-item.danger:hover { background: color-mix(in srgb, var(--accent-warm) 14%, var(--white)); }
 .dropdown-divider { height: 1px; background: var(--border); margin: 4px 0; }
 
 /* Page header */

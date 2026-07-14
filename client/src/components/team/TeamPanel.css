@@ -48,9 +48,10 @@
   color: var(--text);
 }
 
+/* FIXED: was hardcoded #2563eb */
 .owner-tag {
   background: var(--blue-light);
-  color: #2563eb;
+  color: var(--blue-deep);
   font-size: 10px;
   font-weight: 600;
   padding: 1px 6px;

@@ -17,7 +17,7 @@
 .searchbar-input-wrap:focus-within {
   background: var(--white);
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
+  box-shadow: 0 0 0 3px rgba(30,136,229,0.14);
 }
 
 .searchbar-icon { color: var(--text-4); flex-shrink: 0; }
@@ -101,7 +101,8 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.task-icon { background: var(--blue-light); color: #2563eb; }
+/* FIXED: color was hardcoded #2563eb */
+.task-icon { background: var(--blue-light); color: var(--blue-deep); }
 
 .search-item-dot {
   width: 10px;

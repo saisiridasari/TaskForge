@@ -30,6 +30,11 @@
   right: 10px;
 }
 
+/* FIXED: was hardcoded rgba(255,255,255,0.9)/white — a fixed light
+   translucent chip sitting on a colored banner reads fine regardless of
+   page theme (it's on the project's own accent color, not the page
+   background), so this one intentionally stays as a light chip in both
+   modes rather than switching to a theme variable. */
 .project-menu-btn {
   background: rgba(255,255,255,0.9);
   border-radius: 8px;

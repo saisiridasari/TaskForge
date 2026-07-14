@@ -2,23 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import toast from 'react-hot-toast';
 
+// Stored as literal hex in the database (board.color), rendered elsewhere
+// (e.g. the column dot on ProjectBoardPage) — so these stay actual hex
+// values, not CSS variables, but now drawn from the new palette instead of
+// the old default blue/green/purple pastels.
 const BOARD_COLORS = [
-  { label: 'Gray', value: '#e5e7eb' },
-  { label: 'Blue', value: '#dbeafe' },
-  { label: 'Green', value: '#d1fae5' },
-  { label: 'Yellow', value: '#fef3c7' },
-  { label: 'Purple', value: '#ede9fe' },
-  { label: 'Pink', value: '#fce7f3' },
+  { label: 'Gray', value: '#e0d8cc' },
+  { label: 'Blue', value: '#bbdefb' },
+  { label: 'Green', value: '#b8c9a8' },
+  { label: 'Gold', value: '#f0dfc0' },
+  { label: 'Periwinkle', value: '#ccdbfd' },
+  { label: 'Rose', value: '#e8c4b8' },
 ];
 
 export default function BoardModal({ board, projectId, onClose }) {
   const { createBoard, updateBoard } = useProject();
-  const [form, setForm] = useState({ name: '', color: '#e5e7eb' });
+  const [form, setForm] = useState({ name: '', color: '#e0d8cc' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (board) {
-      setForm({ name: board.name || '', color: board.color || '#e5e7eb' });
+      setForm({ name: board.name || '', color: board.color || '#e0d8cc' });
     }
   }, [board]);
 
@@ -62,7 +66,7 @@ export default function BoardModal({ board, projectId, onClose }) {
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {BOARD_COLORS.map(c => (
                   <button key={c.value} type="button" onClick={() => setForm({ ...form, color: c.value })}
-                    style={{ width: 32, height: 32, borderRadius: 8, background: c.value, border: form.color === c.value ? '2.5px solid #374151' : '2.5px solid transparent', cursor: 'pointer', transition: 'border 0.1s' }}
+                    style={{ width: 32, height: 32, borderRadius: 8, background: c.value, border: form.color === c.value ? '2.5px solid var(--text)' : '2.5px solid transparent', cursor: 'pointer', transition: 'border 0.1s' }}
                     title={c.label}
                   />
                 ))}

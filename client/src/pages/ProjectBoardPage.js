@@ -28,7 +28,6 @@ export default function ProjectBoardPage() {
 
   useEffect(() => { fetchProjectBoard(id); }, [id]);
 
-  // Socket real-time sync
   useEffect(() => {
     if (!id) return;
     joinProject(id);
@@ -108,9 +107,6 @@ export default function ProjectBoardPage() {
   const getTasksForBoard = (boardId) =>
     tasks.filter(t => t.boardId === boardId).sort((a, b) => a.order - b.order);
 
-  // NEW — clears the AI Draft badge. Optimistic update (badge disappears
-  // immediately) with rollback if the request actually fails, so a slow
-  // network doesn't leave the UI looking unresponsive.
   const handleMarkReviewed = async (task) => {
     setTasks(prev => prev.map(t =>
       t._id === task._id
@@ -120,7 +116,6 @@ export default function ProjectBoardPage() {
     try {
       await aiAPI.markReviewed(task._id);
     } catch (err) {
-      // Revert on failure — badge comes back, user can try again.
       setTasks(prev => prev.map(t =>
         t._id === task._id
           ? { ...t, aiMetadata: { ...t.aiMetadata, reviewStatus: 'draft' } }
@@ -152,6 +147,9 @@ export default function ProjectBoardPage() {
   const canEdit = currentProject.owner?._id === user?._id || user?.role === 'admin' || user?.role === 'manager';
   const otherActiveUsers = activeUsers.filter(u => u.userId !== user?._id);
 
+  const priorityColor = (priority) =>
+    priority === 'high' ? 'var(--accent-warm)' : priority === 'medium' ? 'var(--accent-gold)' : 'var(--green)';
+
   return (
     <div className="board-page fade-in">
       <div className="board-header">
@@ -161,20 +159,19 @@ export default function ProjectBoardPage() {
             Projects
           </Link>
           <div className="board-title-row">
-            <div className="project-dot" style={{ background: currentProject.color || '#60a5fa' }} />
+            <div className="project-dot" style={{ background: currentProject.color || 'var(--blue)' }} />
             <h1 className="board-title">{currentProject.title}</h1>
             <span className={`badge badge-${currentProject.status}`}>{currentProject.status}</span>
           </div>
           {currentProject.description && <p className="board-desc">{currentProject.description}</p>}
         </div>
         <div className="board-header-actions">
-          {/* Active users indicator */}
           {otherActiveUsers.length > 0 && (
             <div className="active-users-indicator" title={`${otherActiveUsers.map(u => u.name).join(', ')} online`}>
               <div className="live-dot" />
               <div style={{ display:'flex' }}>
                 {otherActiveUsers.slice(0, 4).map(u => (
-                  <Avatar key={u.userId} name={u.name} size="sm" style={{ marginLeft: -6, border: '2px solid white' }} />
+                  <Avatar key={u.userId} name={u.name} size="sm" style={{ marginLeft: -6, border: '2px solid var(--white)' }} />
                 ))}
               </div>
               <span className="active-label">{otherActiveUsers.length} online</span>
@@ -216,7 +213,7 @@ export default function ProjectBoardPage() {
               <div key={board._id} className="kanban-column">
                 <div className="column-header">
                   <div className="column-header-left">
-                    <div className="column-dot" style={{ background: board.color === '#e5e7eb' ? '#94a3b8' : board.color }} />
+                    <div className="column-dot" style={{ background: board.color === '#e5e7eb' ? 'var(--text-4)' : board.color }} />
                     <span className="column-name">{board.name}</span>
                     <span className="column-count">{boardTasks.length}</span>
                   </div>
@@ -231,7 +228,7 @@ export default function ProjectBoardPage() {
                           catch { toast.error('Failed to delete board'); }
                         }
                       }}>
-                        <svg width="12" height="12" fill="none" stroke="#ef4444" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                        <svg width="12" height="12" fill="none" stroke="var(--accent-warm)" strokeWidth="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       </button>
                     </div>
                   )}
@@ -247,12 +244,8 @@ export default function ProjectBoardPage() {
                             <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                               className={`task-card ${snapshot.isDragging ? 'dragging' : ''}`}
                               onClick={() => { setEditTask(task); setShowTaskModal(true); }}>
-                              <div className="task-priority-bar" style={{ background: task.priority === 'high' ? '#f87171' : task.priority === 'medium' ? '#fbbf24' : '#34d399' }} />
+                              <div className="task-priority-bar" style={{ background: priorityColor(task.priority) }} />
                               <div className="task-content">
-                                {/* NEW — AI Draft indicator. Only shows for AI-generated tasks
-                                    still in draft review status (aiMetadata.reviewStatus === 'draft').
-                                    Manually-created tasks have no aiMetadata at all, so this simply
-                                    doesn't render for them. */}
                                 {task.aiMetadata?.reviewStatus === 'draft' && (
                                   <button
                                     onClick={(e) => { e.stopPropagation(); handleMarkReviewed(task); }}
@@ -262,9 +255,9 @@ export default function ProjectBoardPage() {
                                       gap: 4,
                                       fontSize: 10,
                                       fontWeight: 700,
-                                      color: '#7c3aed',
-                                      background: '#f5f3ff',
-                                      border: '1px solid #ddd6fe',
+                                      color: 'var(--purple)',
+                                      background: 'var(--purple-light)',
+                                      border: '1px solid var(--purple-mid)',
                                       borderRadius: 20,
                                       padding: '2px 8px',
                                       marginBottom: 6,

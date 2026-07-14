@@ -15,8 +15,12 @@
   background: var(--gray-2);
 }
 
+/* FIXED: was hardcoded #fafbff — a near-white tint that would have looked
+   like a rendering glitch against a dark card background. color-mix blends
+   a touch of the accent blue into the current card surface instead, so it
+   reads as "subtly highlighted" in both themes rather than "wrong". */
 .notification-item.unread {
-  background: #fafbff;
+  background: color-mix(in srgb, var(--blue) 6%, var(--white));
 }
 
 .notification-item.unread::before {
@@ -39,6 +43,13 @@
   justify-content: center;
   flex-shrink: 0;
 }
+
+/* Category colors — same theme-aware pattern as ActivityPage.css */
+.notif-icon-info { background: var(--blue-light); color: var(--blue-deep); }
+.notif-icon-success { background: var(--green-light); color: var(--green); }
+.notif-icon-warning { background: color-mix(in srgb, var(--accent-gold) 22%, var(--white)); color: #8a6d2f; }
+.notif-icon-accent { background: var(--purple-light); color: var(--purple); }
+.notif-icon-neutral { background: var(--gray-2); color: var(--text-3); }
 
 .notif-body {
   flex: 1;

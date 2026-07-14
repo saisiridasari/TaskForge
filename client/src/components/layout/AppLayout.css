@@ -1,7 +1,8 @@
 .app-layout {
   display: flex;
   min-height: 100vh;
-  background: #f8fafc;
+  /* FIXED: was hardcoded #f8fafc */
+  background: var(--bg-page);
 }
 
 /* Sidebar */
@@ -16,11 +17,53 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: width 0.2s ease;
+}
+
+/* NEW — collapsed (icon-only) desktop mode. Labels are hidden via CSS
+   rather than unmounted in JSX, so the width transition feels smooth
+   instead of text abruptly popping away. */
+.sidebar.collapsed {
+  width: 68px;
+}
+.sidebar.collapsed .logo-text,
+.sidebar.collapsed .nav-item-label,
+.sidebar.collapsed .nav-badge,
+.sidebar.collapsed .user-details,
+.sidebar.collapsed .nav-section-label {
+  display: none;
+}
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+}
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+}
+.sidebar.collapsed .sidebar-header-actions {
+  display: none;
+}
+.sidebar.collapsed .sidebar-footer {
+  justify-content: center;
+}
+.sidebar.collapsed .logout-btn {
+  display: none;
+}
+.sidebar.collapsed .sidebar-collapse-btn {
+  justify-content: center;
 }
 
 .sidebar-header {
   padding: 22px 20px 18px;
   border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .logo {
@@ -37,6 +80,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--border);
 }
 
 .logo-text {
@@ -53,7 +97,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
 .nav-section-label {
@@ -63,7 +107,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0 8px;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .nav-item {
@@ -86,17 +130,54 @@
 
 .nav-item.active {
   background: var(--blue-light);
-  color: #2563eb;
+  color: var(--blue-deep);
   font-weight: 600;
 }
 
 .nav-item.active svg {
-  stroke: #2563eb;
+  stroke: var(--blue-deep);
+}
+
+/* NEW — signature touch: a colored accent rail on the active nav item,
+   rather than relying on background tint alone. Restrained (one thin bar,
+   one color), matching the "spend boldness in one place" approach used
+   elsewhere in today's redesign (stat card bars, team card accents). */
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--blue-deep);
+}
+
+/* NEW — collapse toggle button */
+.sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 12px 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sidebar-collapse-btn:hover {
+  background: var(--gray-2);
+  color: var(--text);
 }
 
 .nav-badge {
   margin-left: auto;
-  background: #ef4444;
+  /* FIXED: was hardcoded #ef4444 */
+  background: var(--accent-warm);
   color: white;
   border-radius: 20px;
   padding: 1px 7px;
@@ -113,6 +194,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  transition: background 0.15s;
+}
+
+.sidebar-footer:hover {
+  background: var(--gray-2);
 }
 
 .user-info {
@@ -151,9 +237,10 @@
   flex-shrink: 0;
 }
 
+/* FIXED: was hardcoded #dc2626 / #fee2e2 */
 .logout-btn:hover {
-  color: #dc2626;
-  background: #fee2e2;
+  color: var(--accent-warm);
+  background: color-mix(in srgb, var(--accent-warm) 14%, var(--white));
 }
 
 /* Main content */
@@ -213,6 +300,22 @@
     box-shadow: var(--shadow-lg);
   }
 
+  /* Collapse mode doesn't apply to the mobile overlay pattern — always
+     show the full sidebar when it's open on a small screen. */
+  .sidebar.collapsed {
+    width: 240px;
+  }
+  .sidebar.collapsed .logo-text,
+  .sidebar.collapsed .nav-item-label,
+  .sidebar.collapsed .nav-badge,
+  .sidebar.collapsed .user-details,
+  .sidebar.collapsed .nav-section-label,
+  .sidebar.collapsed .sidebar-header-actions,
+  .sidebar.collapsed .logout-btn {
+    display: flex;
+  }
+  .sidebar.collapsed .nav-badge { display: inline-flex; }
+
   .sidebar-overlay {
     display: block;
   }
@@ -232,14 +335,9 @@
   border-radius: 50%;
   flex-shrink: 0;
 }
-.connection-dot.connected { background: #34d399; }
-.connection-dot.disconnected { background: #d1d5db; }
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+/* FIXED: was hardcoded #34d399 / #d1d5db */
+.connection-dot.connected { background: var(--green); }
+.connection-dot.disconnected { background: var(--gray-3); }
 
 .topbar-logo {
   display: flex;

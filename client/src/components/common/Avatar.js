@@ -1,17 +1,33 @@
 import React from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
-const COLORS = [
-  { bg: '#dbeafe', text: '#1d4ed8' },
-  { bg: '#d1fae5', text: '#065f46' },
-  { bg: '#ede9fe', text: '#6d28d9' },
-  { bg: '#fce7f3', text: '#9d174d' },
-  { bg: '#fef3c7', text: '#92400e' },
-  { bg: '#ffedd5', text: '#9a3412' },
+// Deterministic hash-based color per person, now drawn from the new
+// palette instead of generic Tailwind pastels — and, since avatars appear
+// everywhere, given a real dark-mode counterpart rather than staying
+// fixed-light regardless of theme (light pastel-bg + dark text doesn't
+// read as clearly once the card around it goes dark navy).
+const LIGHT_COLORS = [
+  { bg: '#e3f2fd', text: '#0d47a1' }, // blue
+  { bg: '#eef2e8', text: '#4a5738' }, // sage/green
+  { bg: '#e2eafc', text: '#3d4f7a' }, // periwinkle
+  { bg: '#f3e3de', text: '#8b4433' }, // rose/rust
+  { bg: '#f7ecd6', text: '#7a5c26' }, // gold
+  { bg: '#f0dcc8', text: '#8a5a2e' }, // amber
 ];
 
-function getColor(name = '') {
-  const idx = name.charCodeAt(0) % COLORS.length;
-  return COLORS[idx];
+const DARK_COLORS = [
+  { bg: '#16294a', text: '#90caf9' }, // blue
+  { bg: '#1c2417', text: '#b8c9a8' }, // sage/green
+  { bg: '#1a2340', text: '#abc4ff' }, // periwinkle
+  { bg: '#2e1f1a', text: '#e8c4b8' }, // rose/rust
+  { bg: '#2e2416', text: '#d9bc8a' }, // gold
+  { bg: '#2e1b16', text: '#d97a63' }, // amber
+];
+
+function getColor(name = '', theme) {
+  const palette = theme === 'dark' ? DARK_COLORS : LIGHT_COLORS;
+  const idx = name.charCodeAt(0) % palette.length;
+  return palette[idx] || palette[0];
 }
 
 function getInitials(name = '') {
@@ -24,8 +40,9 @@ function getInitials(name = '') {
 }
 
 export default function Avatar({ name = '', src, size = 'md', style = {} }) {
+  const { theme } = useTheme();
   const sizeClass = size === 'sm' ? 'avatar-sm' : size === 'lg' ? 'avatar-lg' : size === 'xl' ? 'avatar-xl' : '';
-  const color = getColor(name);
+  const color = getColor(name, theme);
 
   return (
     <div
